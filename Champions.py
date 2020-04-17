@@ -150,6 +150,6 @@ champions = ['Aatrox',
              ]
 
 with open('Champions.sql', 'w') as f: 
-    for i in range(len(champions)):
-        f.write("INSERT INTO Champions (ChampionID, ChampionName) VALUES ({},\'{}\');\n".format(i, champions[i]))
+    for i in range(1,len(champions)+1):
+        f.write("INSERT INTO Champions (ChampionID, ChampionName) VALUES ({},\'{}\');\n".format(i, champions[i-1]))
     
