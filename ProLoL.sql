@@ -72,3 +72,8 @@ CREATE TABLE IF NOT EXISTS ProLoL.Contracts(
 	FOREIGN KEY (PlayerID)
 		REFERENCES Players (PlayerID)
 );
+-- Table for the champions in the game
+CREATE TABLE IF NOT EXISTS ProLoL.Champions(
+	ChampionID INTEGER NOT NULL PRIMARY KEY,
+	ChampionName VARCHAR(30) NOT NULL UNIQUE
+)
