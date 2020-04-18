@@ -73,12 +73,12 @@ CREATE TABLE IF NOT EXISTS ProLoL.Champions(
 	ChampionName VARCHAR(30) NOT NULL UNIQUE
 );
 
-CREATE TABLE ProLoL.Splits(
+CREATE TABLE IF NOT EXISTS ProLoL.Splits(
 	SplitID INTEGER NOT NULL PRIMARY KEY,
 	SplitSeason VARCHAR(10)
 );
 
-CREATE TABLE ProLoL.Games(
+CREATE TABLE IF NOT EXISTS ProLoL.Games(
 	GameID INTEGER PRIMARY KEY,
 	OnPatch FLOAT NOT NULL,
     DatePlayed DATE NOT NULL,
@@ -128,16 +128,16 @@ CREATE TABLE ProLoL.Games(
 	
 );
 
-CREATE TABLE ProLoL.Performances(
+CREATE TABLE IF NOT EXISTS ProLoL.Performances(
 	GameID INTEGER NOT NULL,
 	PlayerID INTEGER NOT NULL,
 	
 	Kills INTEGER NOT NULL CHECK(Kills >= 0),
 	Deaths INTEGER NOT NULL CHECK(Deaths >= 0),
 	Assists INTEGER NOT NULL CHECK(Assists >= 0),
-	DoubleKils INTEGER NOT NULL CHECK(DoubleKills >= 0),
+	DoubleKills INTEGER NOT NULL CHECK(DoubleKills >= 0),
 	TripleKills INTEGER NOT NULL CHECK(TripleKills >=0) ,
-	QuadraKills INTEGER NOT NULL CHECK(TripleKills >= 0),
+	QuadraKills INTEGER NOT NULL CHECK(QuadraKills >= 0),
 	PentaKills INTEGER NOT NULL CHECK(PentaKills >= 0),
 	FirstBloodKill INTEGER NOT NULL CHECK(FirstBloodKill IS 1 OR FirstBloodKill IS 0),
 	FirstBloodAssist INTEGER NOT NULL CHECK(FirstBloodAssist IS 1 OR FirstBloodAssist IS 0),
@@ -168,12 +168,12 @@ CREATE TABLE ProLoL.Performances(
 		REFERENCES Players (PlayerID)
 );
 
-CREATE TABLE ProLoL.Objectives(
+CREATE TABLE IF NOT EXISTS ProLoL.Objectives(
 	ObjectiveID INTEGER PRIMARY KEY,
-	ObjectiveName VARCHAR(20) NOT NULL,
-)
+	ObjectiveName VARCHAR(20) NOT NULL
+);
 
-CREATE TABLE ProLoL.Bans(
+CREATE TABLE IF NOT EXISTS ProLoL.Bans(
 	BanID INTEGER NOT NULL PRIMARY KEY,
     GameID INTEGER NOT NULL,
     TeamID INTEGER NOT NULL,
