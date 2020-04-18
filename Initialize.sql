@@ -90,7 +90,7 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(20, 'Brindon', 'Keesey'   , 'M', 'Breezyyy' , 2 );
 
 -- 100 Thieves Contracts
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(11, 3, 11, DATE('2017-11-22'), DATE('2020-11-17');
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(11, 3, 11, DATE('2017-11-22'), DATE('2020-11-17'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(12, 3, 12, DATE('2019-11-19'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(13, 3, 13, DATE('2019-11-26'), DATE('2022-11-15'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(14, 3, 14, DATE('2019-11-26'), DATE('2021-11-16'));
