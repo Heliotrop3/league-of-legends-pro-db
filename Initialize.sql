@@ -2,6 +2,7 @@
 /*
 	Populate the database
 */
+
 -- Add the Countries
 INSERT INTO Countries (CountryID, CountryName, CountryAbbrv) VALUES (1,'United States', 'NA');
 INSERT INTO Countries (CountryID, CountryName, CountryAbbrv) VALUES (2,'Europe', 'EU');
@@ -22,11 +23,11 @@ INSERT INTO Countries (CountryID, CountryName, CountryAbbrv) VALUES (12,'Oceania
    describing specific champions rather than the lane taken. I.E WildTurtle could play Xerath bot lane and he wouldn't 
    be an Attack Damage Carry but he would still be IMT's bot laner
 */
-INSERT INTO InGameRoles (InGameRoleID, RoleName, RoleAbbrv) VALUES (1,'Bot Laner', 'Bot' );
-INSERT INTO InGameRoles (InGameRoleID, RoleName, RoleAbbrv) VALUES (2,'Support', 'Supp'  );
-INSERT INTO InGameRoles (InGameRoleID, RoleName, RoleAbbrv) VALUES (3,'Mid Laner', 'Mid' );
-INSERT INTO InGameRoles (InGameRoleID, RoleName, RoleAbbrv) VALUES (4,'Top Laner', 'Top' );
-INSERT INTO InGameRoles (InGameRoleID, RoleName, RoleAbbrv) VALUES (5,'Jungler', 'Jg'    );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (1,'Bot Laner', 'Bot' );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (2,'Support', 'Supp'  );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (3,'Mid Laner', 'Mid' );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (4,'Top Laner', 'Top' );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (5,'Jungler', 'Jg'    );
 
 -- Add Orgs: 
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (1 , 'Team Liquid', 1);
