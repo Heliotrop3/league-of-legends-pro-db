@@ -1,3 +1,4 @@
+BEGIN TRANSACTION;
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (1,'Aatrox');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (2,'Ahri');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (3,'Akali');
@@ -146,3 +147,4 @@ INSERT INTO Champions (ChampionID, ChampionName) VALUES (145,'Ziggs');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (146,'Zilean');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (147,'Zoe');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (148,'Zyra');
+END TRANSACTION;
