@@ -151,3 +151,8 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(102, 'Colin'   , 'Earnest'  , 'M', 'Solo'    , 4 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(103, 'Ashkan'  , 'Homayouni', 'M', 'TF Blade', 4 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(104, 'Rafael'  , 'Knittel'  , 'M', 'Rakin'   , 3 );
+
+-- The Free Agents
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(105, 'Aidan', 'Reckamp', 'M', '5fire', 3 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(106, 'Mike' , 'Yeung'  , 'M', 'MikeYeung', 5 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(107, 'Lee' , 'Min-ho'  , 'M', 'Crown', 3 );
