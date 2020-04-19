@@ -4,7 +4,6 @@
 	Source of Contract Data is the team's roster page minus FakeGod whose contract end date was found on:
 		pagehttps://lol.gamepedia.com/Archive:Global_Contract_Database/NA/Current
 */
-BEGIN TRANSACTION;
 -- Cloud 9 Roster: Source - https://lol.gamepedia.com/Cloud9#Player_Roster
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(1, 'Eric'    , 'Ritchie'    , 'M', 'Licorice', 4 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(2, 'Robert'  , 'Huang'      , 'M', 'Blaber'  , 5 );
@@ -17,7 +16,7 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(7, 'Rami'    , 'Charagh', 'M', 'Inori'  , 5 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(8, 'Cristian', 'Palafox', 'M', 'Palafox', 3 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(9, 'Calvin'  , 'Truong' , 'M', 'K1ng'   , 1 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(10,'David'   , 'Bérubé' , 'M', 'Vulcan' , 2 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(10,'David'   , 'Bérubé' , 'M', 'Diamond' , 2 );
 
 
 -- 100 Thieves: Source - https://lol.gamepedia.com/100_Theives#Player_Roster  
@@ -114,10 +113,10 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(76, 'Choi'   , 'Jae-hyun', 'M', 'Huhi'      , 2 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(77, 'Yuri'   , 'Jew'     , 'M', 'Keith'     , 2 );
 -- Golden Guardian Academy: Source - https://lol.gamepedia.com/Golden_Guardians_Academy#Player_Roster
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(78, 'Darshan' , 'Upadhyaya'     , 'M', 'ZionSpartan', 4 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(79, 'Anthony' , 'Barkhotsev'    , 'M', 'Hard'       , 5 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(80, 'Nicholas', 'Antonio Abbott', 'M', 'Ablazeolive', 3 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(81, 'Alex'    , 'Gorcia'        , 'M', 'Gorcia'     , 1 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(78, 'Darshan'  , 'Upadhyaya'     , 'M', 'ZionSpartan', 4 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(79, 'Anthony'  , 'Barkhotsev'    , 'M', 'Hard'       , 5 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(80, 'Nicholas' , 'Antonio Abbott', 'M', 'Ablazeolive', 3 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(81, 'Alexander', 'Gorica'        , 'M', 'Gorica'     , 1 );
 
 
 -- Immortals: Source - https://lol.gamepedia.com/Immortals#Player_Roster
@@ -152,5 +151,3 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(102, 'Colin'   , 'Earnest'  , 'M', 'Solo'    , 4 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(103, 'Ashkan'  , 'Homayouni', 'M', 'TF Blade', 4 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(104, 'Rafael'  , 'Knittel'  , 'M', 'Rakin'   , 3 );
-
-END TRANSACTION;
