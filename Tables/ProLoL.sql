@@ -87,43 +87,43 @@ CREATE TABLE IF NOT EXISTS ProLoL.Games(
     RedSideTeamID INTEGER NOT NULL,
 	WinningTeamID INTEGER NOT NULL,
 	
-	RedSideTop INTEGER NOT NULL,
-	RedSideJungle INTEGER NOT NULL,
-	RedSideMid INTEGER NOT NULL,
-	RedSideBottom INTEGER NOT NULL,
-	RedSideSupport INTEGER NOT NULL,
+	RedSideTopID INTEGER NOT NULL,
+	RedSideJungleID INTEGER NOT NULL,
+	RedSideMidID INTEGER NOT NULL,
+	RedSideBottomID INTEGER NOT NULL,
+	RedSideSupportID INTEGER NOT NULL,
 	
-	BlueSideTop INTEGER NOT NULL,
-	BlueSideJungle INTEGER NOT NULL,
-	BlueSideMid INTEGER NOT NULL,
-	BlueSideBottom INTEGER NOT NULL,
-	BlueSideSupport INTEGER NOT NULL,
+	BlueSideTopID INTEGER NOT NULL,
+	BlueSideJungleID INTEGER NOT NULL,
+	BlueSideMidID INTEGER NOT NULL,
+	BlueSideBottomID INTEGER NOT NULL,
+	BlueSideSupportID INTEGER NOT NULL,
 	
 	FOREIGN KEY (BlueSideTeamID) 
         REFERENCES Teams (TeamID)
     FOREIGN KEY (RedSideTeamID) 
         REFERENCES Teams (TeamID)
 		
-    FOREIGN KEY (RedSideTop) 
+    FOREIGN KEY (RedSideTopID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (RedSideJungle) 
+	FOREIGN KEY (RedSideJungleID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (RedSideMid) 
+	FOREIGN KEY (RedSideMidID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (RedSideBottom) 
+	FOREIGN KEY (RedSideBottomID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (RedSideSupport) 
+	FOREIGN KEY (RedSideSupportID) 
         REFERENCES Players (PlayerID)
 		
-	FOREIGN KEY (BlueSideTop) 
+	FOREIGN KEY (BlueSideTopID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (BlueSideJungle) 
+	FOREIGN KEY (BlueSideJungleID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (BlueSideMid) 
+	FOREIGN KEY (BlueSideMidID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (BlueSideBottom) 
+	FOREIGN KEY (BlueSideBottomID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (BlueSideSupport) 
+	FOREIGN KEY (BlueSideSupportID) 
         REFERENCES Players (PlayerID)
 	
 );
