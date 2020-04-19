@@ -47,7 +47,7 @@ champions = ['Aatrox',
              'Jayce',
              'Jhin',
              'Jinx',
-             'Kai\'\'sa',  # Again, we'll see how SQL handles the atempt at the escape char
+             'Kai\'\'Sa',  # Again, we'll see how SQL handles the atempt at the escape char
              'Kalista',
              'Karma',
              'Karthus',
@@ -60,7 +60,7 @@ champions = ['Aatrox',
              'Kindred',
              'Kled',
              'Kog\'\'maw', # Another one
-             'Leblanc',
+             'LeBlanc',
              'Lee Sin',
              'Leona',
              'Lissandra',
@@ -91,7 +91,7 @@ champions = ['Aatrox',
              'Quinn',
              'Rakan',
              'Rammus',
-             'Rek\'\'sai', # https://www.youtube.com/watch?v=09XkgyfV0c4
+             'Rek\'\'Sai', # https://www.youtube.com/watch?v=09XkgyfV0c4
              'Renekton',
              'Rengar',
              'Riven',
