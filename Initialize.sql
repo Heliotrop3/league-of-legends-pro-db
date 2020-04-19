@@ -202,9 +202,13 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 
 
 -- Add the Substitutes
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(102, 'Colin'   , 'Earnest'  , 'M', 'Solo'    , 4 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(103, 'Ashkan'  , 'Homayouni', 'M', 'TF Blade', 4 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(104, 'Rafael'  , 'Knittel'  , 'M', 'Rakin'   , 3 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(102, 'Colin' , 'Earnest'  , 'M', 'Solo'    , 4 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(103, 'Ashkan', 'Homayouni', 'M', 'TF Blade', 4 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(104, 'Rafael', 'Knittel'  , 'M', 'Rakin'   , 3 );
+-- The Free Agents
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(105, 'Aidan', 'Reckamp', 'M', '5fire', 3 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(106, 'Mike' , 'Yeung'  , 'M', 'MikeYeung', 5 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(107, 'Lee' , 'Min-ho'  , 'M', 'Crown', 3 );
 
 END TRANSACTION;
 
@@ -354,6 +358,11 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(102, 5, 102, DATE('2020-03-04'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(103, 1, 103, DATE('2019-01-17'), DATE('2020-11-17'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(104, 1, 104, DATE('2018-12-12'), DATE('2020-11-17'));
+
+-- Old Contracts
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(105, 1, 105, DATE('2020-01-29'), DATE('2020-03-11'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(106, 1, 106, DATE('2020-01-07'), DATE('2020-02-29'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(107, 1, 107, DATE('2019-11-20'), DATE('2020-03-03'));
 END TRANSACTION;
 
 BEGIN TRANSACTION;
@@ -513,7 +522,7 @@ INSERT INTO Champions (ChampionID, ChampionName) VALUES (45,'Jax');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (46,'Jayce');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (47,'Jhin');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (48,'Jinx');
-INSERT INTO Champions (ChampionID, ChampionName) VALUES (49,'Kai''sa');
+INSERT INTO Champions (ChampionID, ChampionName) VALUES (49,'Kai''Sa');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (50,'Kalista');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (51,'Karma');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (52,'Karthus');
@@ -526,7 +535,7 @@ INSERT INTO Champions (ChampionID, ChampionName) VALUES (58,'Kha''zix');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (59,'Kindred');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (60,'Kled');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (61,'Kog''maw');
-INSERT INTO Champions (ChampionID, ChampionName) VALUES (62,'Leblanc');
+INSERT INTO Champions (ChampionID, ChampionName) VALUES (62,'LeBlanc');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (63,'Lee Sin');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (64,'Leona');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (65,'Lissandra');
@@ -557,7 +566,7 @@ INSERT INTO Champions (ChampionID, ChampionName) VALUES (89,'Qiyana');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (90,'Quinn');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (91,'Rakan');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (92,'Rammus');
-INSERT INTO Champions (ChampionID, ChampionName) VALUES (93,'Rek''sai');
+INSERT INTO Champions (ChampionID, ChampionName) VALUES (93,'Rek''Sai');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (94,'Renekton');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (95,'Rengar');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (96,'Riven');
