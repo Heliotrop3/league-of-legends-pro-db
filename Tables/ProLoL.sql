@@ -169,8 +169,31 @@ CREATE TABLE IF NOT EXISTS ProLoL.Performances(
 );
 
 CREATE TABLE IF NOT EXISTS ProLoL.Objectives(
-	ObjectiveID INTEGER PRIMARY KEY,
-	ObjectiveName VARCHAR(20) NOT NULL
+	GameID INTEGER NOT NULL,
+	TeamID INTEGER NOT NULL,
+	
+	FirstTower INTEGER NOT NULL CHECK(FirstTower IS 1 OR 0),
+	FirstMidTower INTEGER NOT NULL CHECK(FirstMidTower IS 1 OR 0),
+	FirstToThreeTowers INTEGER NOT NULL CHECK(FirstToThreeTowers IS 1 OR 0),
+	FirstDragon INTEGER NOT NULL CHECK(FirstDragon IS 1 OR 0),
+	FirstBaron INTEGER NOT NULL CHECK(FirstBaron IS 1 OR 0),
+	Heralds INTEGER NOT NULL CHECK(Heralds >= 0),
+	Barons INTEGER NOT NULL CHECK(Barons >= 0),
+	Dragons INTEGER NOT NULL CHECK(Dragons >= 0 AND Dragons <= 5),
+	ElementalDrakes INTEGER NOT NULL CHECK(ElementalDrakes >= 0 AND ElementalDrakes <= 5),
+	InfernalDrakes INTEGER NOT NULL CHECK(InfernalDrakes >= 0 AND InfernalDrakes <= 5),
+	MountainDrakes INTEGER NOT NULL CHECK(MountainDrakes >= 0 AND MountainDrakes <= 5),
+	CloudDrakes INTEGER NOT NULL CHECK(CloudDrakes >= 0 AND CloudDrakes <= 5),
+	OceanDrakes INTEGER NOT NULL CHECK(OceanDrakes >= 0 AND OceanDrakes <= 5),
+	ElderDrakes INTEGER NOT NULL CHECK(ElderDrakes >= 0),           -- Technically not an upper bound on the number of Elder Drakes a team could theoretically obtain.
+	Towers INTEGER NOT NULL CHECK(Towers >= 0),           -- While Towers don't respawn I'm not sure if destroying Azir towers would count towards this number. If they do, then in the edge case no limit exists on the upper bound.
+	Inhibitors INTEGER NOT NULL CHECK(Inhibitors >= 0),        
+	
+	PRIMARY KEY (GameID, TeamID) -- Composite Key
+	FOREIGN KEY (GameID)
+		REFERENCES Games (GameID)
+	FOREIGN KEY (TeamID)
+		REFERENCES Teams (TeamID)
 );
 
 CREATE TABLE IF NOT EXISTS ProLoL.Bans(
