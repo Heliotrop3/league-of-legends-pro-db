@@ -1,4 +1,3 @@
-
 BEGIN TRANSACTION;
 -- Cloud9 Contracts
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(1 , 2, 1 , DATE('2017-11-22'), DATE('2022-11-15'));
@@ -7,11 +6,11 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(4 , 2, 4 , DATE('2019-11-19'), DATE('2022-11-15'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(5 , 2, 5 , DATE('2019-11-19'), DATE('2022-11-15'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(6 , 2, 6 , DATE('2019-12-13'), DATE('2022-11-15'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(7 , 2, 7 , DATE('2020-01-07'), DATE('2022-11-15'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(8 , 2, 8 , DATE('2019-11-20'), DATE('2022-11-15'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(9 , 2, 9 , DATE('2019-12-02'), DATE('2022-11-15'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(10, 2, 10, DATE('2018-11-26'), DATE('2022-11-15'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(6 , 12, 6 , DATE('2019-12-13'), DATE('2022-11-15'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(7 , 12, 7 , DATE('2020-01-07'), DATE('2022-11-15'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(8 , 12, 8 , DATE('2019-11-20'), DATE('2022-11-15'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(9 , 12, 9 , DATE('2019-12-02'), DATE('2022-11-15'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(10, 12, 10, DATE('2018-11-26'), DATE('2022-11-15'));
 
 
 -- 100 Thieves Contracts
@@ -21,11 +20,11 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(14, 3, 14, DATE('2019-11-26'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(15, 3, 15, DATE('2019-11-25'), DATE('2022-11-15'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(16, 3, 16, DATE('2018-12-14'), DATE('2022-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(17, 3, 17, DATE('2019-12-02'), DATE('2022-11-15'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(18, 3, 18, DATE('2019-06-12'), DATE('2020-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(19, 3, 19, DATE('2018-12-14'), DATE('2020-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(20, 3, 20, DATE('2019-12-02'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(16, 13, 16, DATE('2018-12-14'), DATE('2022-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(17, 13, 17, DATE('2019-12-02'), DATE('2022-11-15'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(18, 13, 18, DATE('2019-06-12'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(19, 13, 19, DATE('2018-12-14'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(20, 13, 20, DATE('2019-12-02'), DATE('2021-11-16'));
 
 
 -- Evil Geniuses Contracts
@@ -35,11 +34,11 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(24, 7, 24, DATE('2019-11-22'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(25, 7, 25, DATE('2019-11-20'), DATE('2022-11-15'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(26, 7, 26, DATE('2020-01-03'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(27, 7, 27, DATE('2020-01-29'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(28, 7, 28, DATE('2020-01-07'), DATE('2022-11-15'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(29, 7, 29, DATE('2020-01-02'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(30, 7, 30, DATE('2020-01-02'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(26, 17, 26, DATE('2020-01-03'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(27, 17, 27, DATE('2020-01-29'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(28, 17, 28, DATE('2020-01-07'), DATE('2022-11-15'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(29, 17, 29, DATE('2020-01-02'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(30, 17, 30, DATE('2020-01-02'), DATE('2020-11-17'));
 
 
 -- Fly Quest Contracts
@@ -49,11 +48,11 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(34, 5, 34, DATE('2017-05-25'), DATE('2022-11-15'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(35, 5, 35, DATE('2019-11-20'), DATE('2021-11-16'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(36, 5, 36, DATE('2019-07-09'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(37, 5, 37, DATE('2019-12-05'), DATE('2020-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(38, 5, 38, DATE('2019-12-04'), DATE('2020-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(39, 5, 39, DATE('2019-12-03'), DATE('2020-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(40, 5, 40, DATE('2019-12-05'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(36, 15, 36, DATE('2019-07-09'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(37, 15, 37, DATE('2019-12-05'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(38, 15, 38, DATE('2019-12-04'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(39, 15, 39, DATE('2019-12-03'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(40, 15, 40, DATE('2019-12-05'), DATE('2020-11-17'));
 
 
 -- Team Liquid Contracts
@@ -64,11 +63,11 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(45, 1, 45, DATE('2020-02-28'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(46, 1, 46, DATE('2018-11-20'), DATE('2022-11-15'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(47, 1, 47, DATE('2019-01-08'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(48, 1, 48, DATE('2019-11-25'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(49, 1, 49, DATE('2019-12-13'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(50, 1, 50, DATE('2020-03-03'), DATE('2020-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(51, 1, 51, DATE('2019-12-13'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(47, 11, 47, DATE('2019-01-08'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(48, 11, 48, DATE('2019-11-25'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(49, 11, 49, DATE('2019-12-13'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(50, 11, 50, DATE('2020-03-03'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(51, 11, 51, DATE('2019-12-13'), DATE('2021-11-16'));
 
 
 -- Counter Logic Contracts
@@ -79,10 +78,10 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(56, 6, 56, DATE('2020-03-06'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(57, 6, 57, DATE('2019-11-18'), DATE('2021-11-16'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(58, 6, 58, DATE('2019-11-27'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(59, 6, 59, DATE('2019-12-03'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(60, 6, 60, DATE('2019-12-06'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(61, 6, 61, DATE('2019-12-06'), DATE('2020-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(58, 16, 58, DATE('2019-11-27'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(59, 16, 59, DATE('2019-12-03'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(60, 16, 60, DATE('2019-12-06'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(61, 16, 61, DATE('2019-12-06'), DATE('2020-11-16'));
 
 
 -- Dignitas Contracts
@@ -93,10 +92,10 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(66, 4, 66, DATE('2019-11-27'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(67, 4, 67, DATE('2019-12-05'), DATE('2021-11-16'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(68, 4, 68, DATE('2020-01-07'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(69, 4, 69, DATE('2019-12-16'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(70, 4, 70, DATE('2019-12-10'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(71, 4, 71, DATE('2020-01-07'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(68, 14, 68, DATE('2020-01-07'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(69, 14, 69, DATE('2019-12-16'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(70, 14, 70, DATE('2019-12-10'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(71, 14, 71, DATE('2020-01-07'), DATE('2021-11-16'));
 
 
 -- Golden Guardians Contracts
@@ -107,10 +106,10 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(76, 8, 76, DATE('2019-07-05'), DATE('2020-11-17'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(77, 8, 77, DATE('2019-11-22'), DATE('2020-11-17'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(78, 8, 78, DATE('2019-05-28'), DATE('2020-11-17'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(79, 8, 79, DATE('2018-12-18'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(80, 8, 80, DATE('2019-12-04'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(81, 8, 81, DATE('2019-12-04'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(78, 18, 78, DATE('2019-05-28'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(79, 18, 79, DATE('2018-12-18'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(80, 18, 80, DATE('2019-12-04'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(81, 18, 81, DATE('2019-12-04'), DATE('2021-11-16'));
 
 
 -- Immortal Contracts
@@ -121,10 +120,10 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(86, 9, 86, DATE('2020-02-28'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(87, 9, 87, DATE('2019-12-04'), DATE('2021-11-16'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(88, 9, 88, DATE('2019-10-09'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(89, 9, 89, DATE('2020-01-01'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(90, 9, 90, DATE('2020-01-01'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(91, 9, 91, DATE('2019-10-09'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(88, 19, 88, DATE('2019-10-09'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(89, 19, 89, DATE('2020-01-01'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(90, 19, 90, DATE('2020-01-01'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(91, 19, 91, DATE('2019-10-09'), DATE('2020-11-17'));
 
 
 -- Team Solo Mid Contracts
@@ -134,11 +133,11 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(95, 10, 95, DATE('2019-11-24'), DATE('2021-11-16'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(96, 10, 96, DATE('2019-11-20'), DATE('2022-11-15'));
 -- Academy
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(97, 10, 97, DATE('2019-12-03'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(98, 10, 98, DATE('2019-05-26'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(99, 10, 99, DATE('2019-12-03'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(100, 10, 100, DATE('2019-12-03'), DATE('2021-11-16'));
-INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(101, 10, 101, DATE('2018-12-14'), DATE('2020-11-17'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(97, 20, 97, DATE('2019-12-03'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(98, 20, 98, DATE('2019-05-26'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(99, 20, 99, DATE('2019-12-03'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(100, 20, 100, DATE('2019-12-03'), DATE('2021-11-16'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(101, 20, 101, DATE('2018-12-14'), DATE('2020-11-17'));
 
 
 -- Substitute Contracts
@@ -146,10 +145,14 @@ INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(103, 1, 103, DATE('2019-01-17'), DATE('2020-11-17'));
 INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(104, 1, 104, DATE('2018-12-12'), DATE('2020-11-17'));
 
+-- Old Contracts
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(105, 1, 105, DATE('2020-01-29'), DATE('2020-03-11'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(106, 1, 106, DATE('2020-01-07'), DATE('2020-02-29'));
+INSERT INTO Contracts (ContractID, TeamID, PlayerID, StartDate, EndDate) VALUES(107, 1, 107, DATE('2019-11-20'), DATE('2020-03-03'));
+
 END TRANSACTION;
 
 -- Auto-Generated association of contracts with players
-BEGIN TRANSACTION;
 UPDATE Players SET ContractID = 1 WHERE PlayerID = 1;
 UPDATE Players SET ContractID = 2 WHERE PlayerID = 2;
 UPDATE Players SET ContractID = 3 WHERE PlayerID = 3;
@@ -254,4 +257,3 @@ UPDATE Players SET ContractID = 101 WHERE PlayerID = 101;
 UPDATE Players SET ContractID = 102 WHERE PlayerID = 102;
 UPDATE Players SET ContractID = 103 WHERE PlayerID = 103;
 UPDATE Players SET ContractID = 104 WHERE PlayerID = 104;
-END TRANSACTION;
