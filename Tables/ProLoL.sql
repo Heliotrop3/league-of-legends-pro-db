@@ -172,21 +172,20 @@ CREATE TABLE IF NOT EXISTS ProLoL.Objectives(
 	GameID INTEGER NOT NULL,
 	TeamID INTEGER NOT NULL,
 	
-	FirstTower INTEGER NOT NULL CHECK(FirstTower IS 1 OR FirstTower IS 0),
-	FirstMidTower INTEGER NOT NULL CHECK(FirstMidTower IS 1 OR FirstMidTower IS 0),
-	FirstToThreeTowers INTEGER NOT NULL CHECK(FirstToThreeTowers IS 1 OR FirstToThreeTowers IS 0),
-	FirstDrake INTEGER NOT NULL CHECK(FirstDrake IS 1 OR FirstDrake IS 0),
-	FirstBaron INTEGER NOT NULL CHECK(FirstBaron IS 1 OR FirstBaron IS 0),
-	Heralds INTEGER NOT NULL CHECK(Heralds >= 0),
-	Barons INTEGER NOT NULL CHECK(Barons >= 0),
-	Drakes INTEGER NOT NULL CHECK(Drakes >= 0 AND Drakes < 6),
-	InfernalDrakes INTEGER NOT NULL CHECK(InfernalDrakes >= 0 AND InfernalDrakes < 6),
-	MountainDrakes INTEGER NOT NULL CHECK(MountainDrakes >= 0 AND MountainDrakes < 6),
-	CloudDrakes INTEGER NOT NULL CHECK(CloudDrakes >= 0 AND CloudDrakes < 6),
-	OceanDrakes INTEGER NOT NULL CHECK(OceanDrakes >= 0 AND OceanDrakes < 6),
-	ElderDrakes INTEGER NOT NULL CHECK(ElderDrakes >= 0),           -- Technically not an upper bound on the number of Elder Drakes a team could theoretically obtain.
-	Towers INTEGER NOT NULL CHECK(Towers >= 0),           -- While Towers don't respawn I'm not sure if destroying Azir towers would count towards this number. If they do, then in the edge case no limit exists on the upper bound.
-	Inhibitors INTEGER NOT NULL CHECK(Inhibitors >= 0),        
+	FirstTower INTEGER NOT NULL CHECK( FirstTower IN (1,0)),
+	FirstMidTower INTEGER NOT NULL CHECK( FirstMidTower IN (1,0)),
+	FirstToThreeTowers INTEGER NOT NULL CHECK( FirstToThreeTowers IN (1,0)),
+    FirstDrake INTEGER NOT NULL CHECK(FirstDrake IN (1,0)),
+	FirstBaron INTEGER NOT NULL CHECK(FirstBaron IN (1,0)),
+	Heralds INTEGER NOT NULL CHECK(Heralds > -1),
+	Barons INTEGER NOT NULL CHECK(Barons > -1),
+	InfernalDrakes INTEGER NOT NULL CHECK(InfernalDrakes > -1 AND InfernalDrakes < 6),
+	MountainDrakes INTEGER NOT NULL CHECK(MountainDrakes > -1 AND MountainDrakes < 6),
+	CloudDrakes INTEGER NOT NULL CHECK(CloudDrakes > -1 AND CloudDrakes < 6),
+	OceanDrakes INTEGER NOT NULL CHECK(OceanDrakes > -1 AND OceanDrakes < 6),
+	ElderDrakes INTEGER NOT NULL CHECK(ElderDrakes > -1),           -- Technically not an upper bound on the number of Elder Drakes a team could theoretically obtain.
+	Towers INTEGER NOT NULL CHECK(Towers > -1),           -- While Towers don't respawn I'm not sure if destroying Azir towers would count towards this number. If they do, then in the edge case no limit exists on the upper bound.
+	Inhibitors INTEGER NOT NULL CHECK(Inhibitors > -1),        
 	
 	PRIMARY KEY (GameID, TeamID) -- Composite Key
 	FOREIGN KEY (GameID)
