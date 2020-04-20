@@ -5,7 +5,7 @@
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (1,  'Team Liquid'         , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (2,  'Cloud9'              , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (3,  '100 Thieves'         , 1 );
-INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (4,  'Team Dignitas'       , 1 );
+INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (4,  'Dignitas'       , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (5,  'FlyQuest'            , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (6,  'Counter Logic Gaming', 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (7,  'Evil Geniuses'       , 1 );
