@@ -5,7 +5,7 @@
    be an Attack Damage Carry but he would still be IMT's bot laner
 */
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (1,'Bot Laner', 'Bot' );
-INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (2,'Support', 'Supp'  );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (2,'Support'  , 'Sup' );
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (3,'Mid Laner', 'Mid' );
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (4,'Top Laner', 'Top' );
-INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (5,'Jungler', 'Jg'    );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (5,'Jungler'  , 'Jng' );
