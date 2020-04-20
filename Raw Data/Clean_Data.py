@@ -12,38 +12,17 @@ import sqlite3
 def find_player_pos(Dictionary, Player):
     for key in position_ids:
         if position_ids[key] == Player.position:
-            Dictionary[Player.gameid]["".join([Player.side,"Side",key,"ID"])] = int(Player.playerid)
+            Dictionary[Player.gameid]["".join([Player.side,"Side",key,"ID"])] = int(Player.PlayerID)
     return Dictionary
 
 # Given a named tuple and a list of metrics, transfer the metrics from the tuple to the dict
 def update_ledger(Dictionary, NamedTuple, metrics):
+    print(NamedTuple)
     # Create a dictionary via grabbing the desired metrics as keys and their associated values as... well values.
     result = {word: int(getattr(NamedTuple, word)) for word in metrics}
     # Store the resulting dictionary in the Dictionary under the GameID then TeamID
     Dictionary[NamedTuple.gameid][NamedTuple.TeamID] = result
     return Dictionary
-
-"""
-Provide a named tuple, the table where you want to add the data, and a GameID
-to the function. The function will return a string representing a SQL query.
-"""
-def create_sql(NamedTuple, TableToWrite, GameID):
-    str1 = "INSERT INTO {} (GameID,".format(TableToWrite)
-    str2 = "VALUES({},".format(GameID)    
-    for i in range(len(NamedTuple._fields)-1):
-        str1 = " ".join([str1, "{},".format(sorted(NamedTuple._fields)[i])])
-        
-        if isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), datetime):
-            str2 = " ".join([str2, "DATETIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
-
-        elif isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), time):
-            str2 = " ".join([str2, "TIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
-            
-        else:
-            str2 = " ".join([str2, "{},".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
-    str1 = " ".join([str1, "{})".format(sorted(NamedTuple._fields)[i+1])])
-    str2 = " ".join([str2, "{});\n".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i+1]))])
-    return(" ".join([str1,str2]))
 
 
 def create_bans_sql(ChampionID, GameID, BanID, TeamID):
@@ -58,7 +37,7 @@ def parse_game_length(seconds):
     return datetime.strptime((":".join([str(int(seconds / 3600)), str(int((seconds % 3600) /60 )), str(int((seconds % 60)% 60))])),'%H:%M:%S').time()
 
 # Connect to the database
-conn = sqlite3.connect('PATH TO DATABASE')
+conn = sqlite3.connect('PATH TO DATABASE HERE')
 # Create an object to interact with the db
 c = conn.cursor()
 
@@ -67,6 +46,7 @@ player_ids = {}
 for row in c.execute('SELECT PlayerID, ProHandle FROM Players;'):
     player_ids[row[1]] = int(row[0])
 #print(player_ids)
+#input()
 
 # Grab the db's association of Teams with TeamIDs
 team_ids = {}
@@ -126,6 +106,7 @@ derivable_stats = ['teamkills',
 
 # Drop all derivable stats
 data = data.drop(derivable_stats, axis = 1)
+
 # Rename the columns. Essential during the SQL generation phase
 data.rename(columns = {
                        'playerid'                : 'PlayerID',
@@ -186,20 +167,19 @@ data['ChampionID'] = data['ChampionID'].replace({'Kai\'sa':'Kai\'Sa',
 ##### Grab onlt the LCS and Academy Teams. If not filtering by region, comment out the below line
 data =  data[data['league'].isin(['LCS','LCS.A'])]
 #####
-
 # Capitalize the position abbreviations. This enables the mapping of our db's PositionIDs over the provided abbreviations
 data['position'] = data['position'].str.capitalize()
 # Substitute our PlayerIDs, TeamIDs, ChampionIDs, and PositionIDs in place of the provided values.
-data.loc[:,'playerid'] = data['player'].map(player_ids)
+data.loc[:,'PlayerID'] = data['player'].map(player_ids)
 data.loc[:,'TeamID'] = data['TeamID'].map(team_ids)
-data.loc[:,'ChampionID'] = data['ChampionID'].replace(champion_ids)
-data.loc[:,'position'] = data['position'].replace(position_ids)
+data.loc[:,'ChampionID'] = data['ChampionID'].map(champion_ids)
+data.loc[:,'position'] = data['position'].map(position_ids)
 
 # Grab the rows consisting of the team objective stats
-Teams = data[data['playerid'].isnull()]     # Alternatively, something like "NATeams['position'] == 'team'" would also work
+Teams = data[data['PlayerID'].isnull()]     # Alternatively, something like "NATeams['position'] == 'team'" would also work
 
 # Find any  players not in the database. (Because I have a contract aspect to the db currently I'm manually adding players to the db and SQL files)
-missing = Teams[(Teams.playerid) & (Teams.player.notnull())]
+missing = Teams[(Teams.PlayerID) & (Teams.player.notnull())]
 if len(set(missing['player'])) > 0:
     print("Error: {} Player(s) are missing from the Dictionary".format(len(set(missing['player']))))
     print(set(missing['player']))
@@ -207,6 +187,9 @@ if len(set(missing['player'])) > 0:
 
 # Drop the team rows from the Player Dataframe
 Players = data[data['player'].notnull()]
+##print(set(Players['player']))
+##print(set(Players['PlayerID']))
+##input()
 # Create a list of non-player performance metrics
 non_player_stats = ['url',
                     'date',
@@ -284,10 +267,14 @@ TeamObjectiveMetrics = ['FirstDrake', 'InfernalDrakes','MountainDrakes', 'CloudD
 PlayerPerformanceMetrics = ['Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
                             'FirstBloodKill', 'FirstBloodAssist', 'FirstBloodVictim', 'DamageToChampions', 'WardsPlaced', 'WardsKilled',
                             'ControlWardsBought', 'VisionScore', 'TotalGold', 'EarnedGold', 'GoldSpent', 'MinionKills', 'FriendlyMonstersKilled',
-                            'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen', 'PlayerID']
+                            'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen', 'PlayerID','TeamID']
 
+
+##### Broken here
 # Iterate over the rows in our Teams df
 for TeamResult in Teams.itertuples():
+    print(TeamResult)
+    input()
     # If the match has not been recorded
     if TeamResult.gameid not in MatchResults:
         # Parse and add the date to the dict
@@ -310,8 +297,11 @@ for TeamResult in Teams.itertuples():
         MatchResults[TeamResult.gameid]['WinningTeamID'] = TeamResult.TeamID
         
     temp = Players.loc[(Players['gameid'] == TeamResult.gameid) & (Players['TeamID'] == TeamResult.TeamID)]
+    print(temp['PlayerID'])
     for Player in temp.itertuples():
         MatchResults = find_player_pos(MatchResults, Player)
+        print(MatchResults)
+        input()
         PlayerPerformances = update_ledger(PlayerPerformances, Player, PlayerPerformanceMetrics)
         
 print("Parsing Data Completed")
@@ -348,15 +338,49 @@ e.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
 m = open("Bans.sql", "w")
 m.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
 
+
+
+"""
+Provide a named tuple, the table where you want to add the data, and a GameID
+to the function. The function will return a string representing a SQL query.
+"""
+def create_sql(NamedTuple, TableToWrite, GameID):
+    str1 = "INSERT INTO {} (GameID,".format(TableToWrite)
+    str2 = "VALUES({},".format(GameID)    
+    for i in range(len(NamedTuple._fields)-1):
+        str1 = " ".join([str1, "{},".format(sorted(NamedTuple._fields)[i])])
+        
+        if isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), datetime):
+            str2 = " ".join([str2, "DATETIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
+
+        elif isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), time):
+            str2 = " ".join([str2, "TIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
+            
+        else:
+            str2 = " ".join([str2, "{},".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
+    str1 = " ".join([str1, "{})".format(sorted(NamedTuple._fields)[i+1])])
+    str2 = " ".join([str2, "{});\n".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i+1]))])
+    return(" ".join([str1,str2]))
+
+def find_player_name(player_id):
+    for key,value in player_ids.items():
+        if value == player_id:
+            return key
 # Initialize a psuedo GameID
 x = 1
 BanID = 1
 # Iterate over the recorded matches
 for match in MatchResults:
+    print("Match: ",match)
     # Store the contents of the match into our named tuple
     MatchTemp = MatchResultsTuple(**MatchResults[match])
     # Iterate across the players in the match
     for player in sorted(PlayerPerformances[match]):
+        print(PlayerPerformances[match][player])
+        print("Player: {}".format(find_player_name(player)))
+        print("PlayerID: {}".format(player))
+        print("TeamID: {}".format(PlayerPerformances[match][player]['TeamID']))
+        input()
         # Store the player data into another of our named tuples
         PlayerTemp = PlayerPerformanceTuple(**PlayerPerformances[match][player])
         # Write the returned SQL query to the file associated with the Player's performance
