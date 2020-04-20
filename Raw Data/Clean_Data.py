@@ -1,6 +1,6 @@
 # Author: Tyler Huffman
 # Last Modified: 2020-04-20
-# TODO: Comment the code, fix the Constraint fail Objectives is generating, figure out if there's a more effecient way to generate the SQL queries
+# TODO: Figure out if there's a more effecient way to generate the SQL queries
 from datetime import date, datetime
 from collections import defaultdict, namedtuple
 from itertools import chain
@@ -9,7 +9,7 @@ import sqlite3
 import time
 
 
-###########################################
+################--- Functions ---################
 
 def find_player_pos(Dictionary, Player):
     for key in position_ids:
@@ -17,36 +17,19 @@ def find_player_pos(Dictionary, Player):
             Dictionary[Player.gameid]["".join([Player.side,"Side",key,"ID"])] = int(Player.playerid)
     return Dictionary
 
-
-######
-# I can 100% combine these functions.
-# A task for a later time.
-def record_player_performance(Dictionary, Player):
-    metrics = ['Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
-               'FirstBloodKill', 'FirstBloodAssist', 'FirstBloodVictim', 'DamageToChampions', 'WardsPlaced', 'WardsKilled',
-               'ControlWardsBought', 'VisionScore', 'TotalGold', 'EarnedGold', 'GoldSpent', 'MinionKills', 'FriendlyMonstersKilled',
-               'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen', 'PlayerID']
-    performance = {word: int(getattr(Player, word)) for word in metrics}
-    Dictionary[Player.gameid][Player.playerid] = performance
+# Given a named tuple and a list of metrics, transfer the metrics from the tuple to the dict
+def update_ledger(Dictionary, NamedTuple, metrics):
+    # Create a dictionary via grabbing the desired metrics as keys and their associated values as... well values.
+    result = {word: int(getattr(NamedTuple, word)) for word in metrics}
+    # Store the resulting dictionary in the Dictionary under the GameID then TeamID
+    Dictionary[NamedTuple.gameid][NamedTuple.TeamID] = result
     return Dictionary
-
-
-def record_team_objectives(Dictionary, Match):
-    metrics = ['FirstDrake', 'Drakes','InfernalDrakes',
-               'MountainDrakes', 'CloudDrakes', 'OceanDrakes', 'ElderDrakes',
-               'Heralds', 'FirstBaron', 'Barons', 'FirstTower', 'Towers',
-                'FirstMidTower', 'FirstToThreeTowers', 'Inhibitors', 'TeamID']
-    performance = {word: int(getattr(Match, word)) for word in metrics}
-    Dictionary[Match.gameid][Match.TeamID] = performance
-    return Dictionary
-
-#####
 
 """
 Provide a named tuple, the table where you want to add the data, and a GameID
 to the function. The function will return a string representing a SQL query.
 """
-def prep_write(NamedTuple, TableToWrite, GameID):
+def create_sql(NamedTuple, TableToWrite, GameID):
     str1 = "INSERT INTO {} (GameID,".format(TableToWrite)
     str2 = "VALUES({},".format(GameID)    
     for i in range(len(NamedTuple._fields)-1):
@@ -64,7 +47,13 @@ def prep_write(NamedTuple, TableToWrite, GameID):
     str2 = " ".join([str2, "{});\n".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i+1]))])
     return(" ".join([str1,str2]))
 
-###########################################
+
+def create_bans_sql(ChampionID, GameID, BanID, TeamID):
+    sql_str = "INSERT INTO Bans (BanID, GameID, TeamID, ChampionID) VALUES({}, {}, {}, {});\n".format(BanID, GameID, TeamID, ChampionID)
+    BanID += 1
+    return sql_str, BanID
+ 
+###############################################
 
 # Convert the GameLength from seconds to a datetime object
 def parse_game_length(seconds):
@@ -102,7 +91,7 @@ for row in c.execute('SELECT PositionID, PositionAbbrv FROM Positions;'):
 # Read in the CSV file containing the data
 data = pd.read_csv("2020-spring-match-data-OraclesElixir-2020-04-13d.csv",low_memory=False)
 
-# I'm aiming to have a database in 3rd Normalized form. In short, I don't want any data I can derive.
+# I'm aiming to have a database in strictly 3rd Normalized form. In short, I don't want any data I can derive.
 derivable_stats = ['teamkills',
                    'teamdeaths',
                    "team kpm",
@@ -134,7 +123,8 @@ derivable_stats = ['teamkills',
                    'opp_csat15',
                    'golddiffat15',
                    'xpdiffat15',
-                   'csdiffat15']
+                   'csdiffat15',
+                   'dragons']
 
 # Drop all derivable stats
 data = data.drop(derivable_stats, axis = 1)
@@ -142,7 +132,6 @@ data = data.drop(derivable_stats, axis = 1)
 data.rename(columns = {
                        'playerid'                : 'PlayerID',
                        'firstdragon'             : 'FirstDrake',
-                       'dragons'                 : 'Drakes',
                        'elementaldrakes'         : 'ElementalDrakes',
                        'infernals'               : 'InfernalDrakes',
                        'mountains'               : 'MountainDrakes',
@@ -231,7 +220,6 @@ non_player_stats = ['url',
                     'gamelength',
                     'result',
                     'FirstDrake',
-                    'Drakes',
                     'ElementalDrakes',
                     'InfernalDrakes',
                     'MountainDrakes',
@@ -288,19 +276,34 @@ I'll come back and refactor this section of code once I have a working version.
 MatchResults = defaultdict(lambda: defaultdict(dict))
 PlayerPerformances = defaultdict(lambda: defaultdict(dict))
 TeamObjectives = defaultdict(lambda: defaultdict(dict))
+TeamBans = defaultdict(lambda: defaultdict(dict))
 
-# 
+BanMetrics = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5',  'TeamID']
+TeamObjectiveMetrics = ['FirstDrake', 'InfernalDrakes','MountainDrakes', 'CloudDrakes',
+                        'OceanDrakes', 'ElderDrakes', 'Heralds', 'FirstBaron', 'Barons',
+                        'FirstTower', 'Towers', 'FirstMidTower', 'FirstToThreeTowers',
+                        'Inhibitors', 'TeamID']
+PlayerPerformanceMetrics = ['Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
+                            'FirstBloodKill', 'FirstBloodAssist', 'FirstBloodVictim', 'DamageToChampions', 'WardsPlaced', 'WardsKilled',
+                            'ControlWardsBought', 'VisionScore', 'TotalGold', 'EarnedGold', 'GoldSpent', 'MinionKills', 'FriendlyMonstersKilled',
+                            'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen', 'PlayerID']
+
+# Iterate over the rows in our Teams df
 for TeamResult in Teams.itertuples():
+    # If the match has not been recorded
     if TeamResult.gameid not in MatchResults:
-        # Parse the date
+        # Parse and add the date to the dict
         MatchResults[TeamResult.gameid]['DatePlayed'] = datetime.strptime(TeamResult.date, '%m/%d/%Y %M:%S')
-        # Parse the game length
+        # Parse and add the game length to the dict
         MatchResults[TeamResult.gameid]['GameLength'] = parse_game_length(TeamResult.gamelength)
-        # Grab the patch
+        # Parse and add the patch to the dict
         MatchResults[TeamResult.gameid]['OnPatch'] = TeamResult.patch
 
-    TeamObjectives = record_team_objectives(TeamObjectives, TeamResult)
-
+    
+    TeamObjectives = update_ledger(TeamObjectives, TeamResult, TeamObjectiveMetrics)
+    TeamBans = update_ledger(TeamBans, TeamResult, BanMetrics)
+    #print(TeamBans)
+    
     if TeamResult.side == 'Blue':
         MatchResults[TeamResult.gameid]['BlueSideTeamID'] = TeamResult.TeamID
     else:
@@ -311,16 +314,16 @@ for TeamResult in Teams.itertuples():
     temp = Players.loc[(Players['gameid'] == TeamResult.gameid) & (Players['TeamID'] == TeamResult.TeamID)]
     for Player in temp.itertuples():
         MatchResults = find_player_pos(MatchResults, Player)
-        PlayerPerformances = record_player_performance(PlayerPerformances, Player)
+        PlayerPerformances = update_ledger(PlayerPerformances, Player, PlayerPerformanceMetrics)
         
 print("Parsing Data Completed")
 
 #### DEBUGGING STATEMENTS
-##print(TeamObjectives.keys())
-##input()
-##print(TeamObjectives['ESPORTSTMNT01/1291177'].values())
+#print(MatchResults.keys())
+#input()
+#print(PlayerPerformances['ESPORTSTMNT01/1291177'][16])
 ##print(TeamObjectives['ESPORTSTMNT01/1291177'])
-##input()
+#input()
 ##print(sorted(TeamObjectives['ESPORTSTMNT01/1291177'].keys()))
 ##input()
 ####
@@ -329,8 +332,9 @@ from datetime import time  # Without this here (no placing it at the top of the 
 
 # Create named tuples to facilitate converting the data into SQL statements
 MatchResultsTuple = namedtuple('MatchResultsTuple', sorted(MatchResults['ESPORTSTMNT01/1291177']))
-PlayerPerformanceTuple = namedtuple('PlayerPerformanceTuple',sorted(PlayerPerformances['ESPORTSTMNT01/1291177'][18.0]))
+PlayerPerformanceTuple = namedtuple('PlayerPerformanceTuple',sorted(PlayerPerformances['ESPORTSTMNT01/1291177'][16]))
 TeamObjectivesTuple = namedtuple('TeamObjectivesTuple',sorted(TeamObjectives['ESPORTSTMNT01/1291177'][16]))
+TeamBansTuple = namedtuple('TeamBansTuple',sorted(TeamBans['ESPORTSTMNT01/1291177'][16]))
 
 """
 I need to figure out if theres a better way to transform the data from the csv and into SQL.
@@ -345,8 +349,12 @@ g.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
 e = open("Objectives.sql", "w")
 e.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
 
+m = open("Bans.sql", "w")
+m.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
+
 # Initialize a psuedo GameID
 x = 1
+BanID = 1
 # Iterate over the recorded matches
 for match in MatchResults:
     # Store the contents of the match into our named tuple
@@ -356,21 +364,27 @@ for match in MatchResults:
         # Store the player data into another of our named tuples
         PlayerTemp = PlayerPerformanceTuple(**PlayerPerformances[match][player])
         # Write the returned SQL query to the file associated with the Player's performance
-        g.write(prep_write(PlayerTemp, "Performances", x))
+        g.write(create_sql(PlayerTemp, "Performances", x))
     # Iterate across the team's objective control stats of the given match
     for team in sorted(TeamObjectives[match]):
         # Store the team's objective stats in the named tuple associated with the Objectives
         ObjectivesTemp = TeamObjectivesTuple(**TeamObjectives[match][team])
         # Write the returned SQL query to the file associated with the Teams's Objective Control
-        e.write(prep_write(ObjectivesTemp, "Objectives", x))
+        e.write(create_sql(ObjectivesTemp, "Objectives", x))
+    for team in sorted(TeamBans[match]):
+        for ban in TeamBans[match][team]:
+            sql_query, BanID = create_bans_sql(TeamBans[match][team][ban], x, BanID, team)
+            m.write(sql_query)
     # Write the returned SQL query relating to when, what patch, and who played in the game to the appropriate file
-    f.write(prep_write(MatchTemp, "Games", x))
+    f.write(create_sql(MatchTemp, "Games", x))
     # Increase the psuedo GameID
     x += 1
     
 f.write("\n\nEND TRANSACTION;")
 g.write("\n\nEND TRANSACTION;")
 e.write("\n\nEND TRANSACTION;")
+m.write("\n\nEND TRANSACTION;")
 f.close()
 g.close()
 e.close()
+m.close()
