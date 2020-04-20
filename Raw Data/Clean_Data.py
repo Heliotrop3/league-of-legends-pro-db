@@ -1,12 +1,10 @@
 # Author: Tyler Huffman
 # Last Modified: 2020-04-20
 # TODO: Figure out if there's a more effecient way to generate the SQL queries
-from datetime import date, datetime
+from datetime import date, datetime, time
 from collections import defaultdict, namedtuple
-from itertools import chain
 import pandas as pd
 import sqlite3
-import time
 
 
 ################--- Functions ---################
@@ -327,8 +325,6 @@ print("Parsing Data Completed")
 ##print(sorted(TeamObjectives['ESPORTSTMNT01/1291177'].keys()))
 ##input()
 ####
-
-from datetime import time  # Without this here (no placing it at the top of the file doesn't work), the "isinstance(...)" checks will throw an error. 
 
 # Create named tuples to facilitate converting the data into SQL statements
 MatchResultsTuple = namedtuple('MatchResultsTuple', sorted(MatchResults['ESPORTSTMNT01/1291177']))
