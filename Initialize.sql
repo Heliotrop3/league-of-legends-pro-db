@@ -19,10 +19,10 @@ INSERT INTO Countries (CountryID, CountryName, CountryAbbrv) VALUES (12,'Oceania
    be an Attack Damage Carry but he would still be IMT's bot laner
 */
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (1,'Bot Laner', 'Bot' );
-INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (2,'Support', 'Supp'  );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (2,'Support'  , 'Sup' );
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (3,'Mid Laner', 'Mid' );
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (4,'Top Laner', 'Top' );
-INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (5,'Jungler', 'Jg'    );
+INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (5,'Jungler'  , 'Jng' );
 
 -- Add Teams:
 /*
@@ -32,7 +32,7 @@ BEGIN TRANSACTION;
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (1,  'Team Liquid'         , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (2,  'Cloud9'              , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (3,  '100 Thieves'         , 1 );
-INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (4,  'Team Dignitas'       , 1 );
+INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (4,  'Dignitas'       , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (5,  'FlyQuest'            , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (6,  'Counter Logic Gaming', 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (7,  'Evil Geniuses'       , 1 );
@@ -70,7 +70,7 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(7, 'Rami'    , 'Charagh', 'M', 'Inori'  , 5 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(8, 'Cristian', 'Palafox', 'M', 'Palafox', 3 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(9, 'Calvin'  , 'Truong' , 'M', 'K1ng'   , 1 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(10,'David'   , 'Bérubé' , 'M', 'Vulcan' , 2 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(10,'David'   , 'Bérubé' , 'M', 'Diamond' , 2 );
 
 
 -- 100 Thieves: Source - https://lol.gamepedia.com/100_Theives#Player_Roster  
@@ -192,7 +192,7 @@ INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionI
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(93, 'Joshua' , 'Hartnett', 'M', 'Dardoch'     , 5 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(94, 'Søren'  , 'Bjerg'   , 'M', 'Bjergsen'    , 3 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(95, 'Kasper' , 'Kobberup', 'M', 'Kobbe'       , 1 );
-INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(96, 'Vincent', 'Wang'    , 'M', 'Biodaddy'    , 2 );
+INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(96, 'Vincent', 'Wang'    , 'M', 'Biofrost'    , 2 );
 -- Team Solo Mid Academy: Source - https://lol.gamepedia.com/TSM_Academy#Player_Roster
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(97, 'Niship'   , 'Doshi' , 'M', 'Dhokla' , 4 );
 INSERT INTO Players (PlayerID, FirstName, LastName, Gender, ProHandle, PositionID ) VALUES(98, 'Mingyi'   , 'Lu'    , 'M', 'Spica'  , 5 );
@@ -531,10 +531,10 @@ INSERT INTO Champions (ChampionID, ChampionName) VALUES (54,'Katarina');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (55,'Kayle');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (56,'Kayn');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (57,'Kennen');
-INSERT INTO Champions (ChampionID, ChampionName) VALUES (58,'Kha''zix');
+INSERT INTO Champions (ChampionID, ChampionName) VALUES (58,'Kha''Zix');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (59,'Kindred');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (60,'Kled');
-INSERT INTO Champions (ChampionID, ChampionName) VALUES (61,'Kog''maw');
+INSERT INTO Champions (ChampionID, ChampionName) VALUES (61,'Kog''Maw');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (62,'LeBlanc');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (63,'Lee Sin');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (64,'Leona');
