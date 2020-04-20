@@ -88,16 +88,16 @@ CREATE TABLE IF NOT EXISTS ProLoL.Games(
 	WinningTeamID INTEGER NOT NULL,
 	
 	RedSideTopID INTEGER NOT NULL,
-	RedSideJungleID INTEGER NOT NULL,
+	RedSideJngID INTEGER NOT NULL,
 	RedSideMidID INTEGER NOT NULL,
-	RedSideBottomID INTEGER NOT NULL,
-	RedSideSupportID INTEGER NOT NULL,
+	RedSideBotID INTEGER NOT NULL,
+	RedSideSupID INTEGER NOT NULL,
 	
 	BlueSideTopID INTEGER NOT NULL,
-	BlueSideJungleID INTEGER NOT NULL,
+	BlueSideJngID INTEGER NOT NULL,
 	BlueSideMidID INTEGER NOT NULL,
-	BlueSideBottomID INTEGER NOT NULL,
-	BlueSideSupportID INTEGER NOT NULL,
+	BlueSideBotID INTEGER NOT NULL,
+	BlueSideSupID INTEGER NOT NULL,
 	
 	FOREIGN KEY (BlueSideTeamID) 
         REFERENCES Teams (TeamID)
@@ -106,24 +106,24 @@ CREATE TABLE IF NOT EXISTS ProLoL.Games(
 		
     FOREIGN KEY (RedSideTopID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (RedSideJungleID) 
+	FOREIGN KEY (RedSideJngID) 
         REFERENCES Players (PlayerID)
 	FOREIGN KEY (RedSideMidID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (RedSideBottomID) 
+	FOREIGN KEY (RedSideBotID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (RedSideSupportID) 
+	FOREIGN KEY (RedSideSupID) 
         REFERENCES Players (PlayerID)
 		
 	FOREIGN KEY (BlueSideTopID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (BlueSideJungleID) 
+	FOREIGN KEY (BlueSideJngID) 
         REFERENCES Players (PlayerID)
 	FOREIGN KEY (BlueSideMidID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (BlueSideBottomID) 
+	FOREIGN KEY (BlueSideBotID) 
         REFERENCES Players (PlayerID)
-	FOREIGN KEY (BlueSideSupportID) 
+	FOREIGN KEY (BlueSideSupID) 
         REFERENCES Players (PlayerID)
 	
 );
@@ -151,8 +151,8 @@ CREATE TABLE IF NOT EXISTS ProLoL.Performances(
 	EarnedGold INTEGER NOT NULL CHECK(EarnedGold >= 0),   -- The total gold earned minus the earned gold and the gold generation. Perhaps I could derive this? Would need to know the formula for gold generation over time.
 	GoldSpent INTEGER NOT NULL CHECK(GoldSpent >= 0),
 	MinionKills INTEGER NOT NULL CHECK(MinionKills >= 0),
-	FriendlyMonsterKills INTEGER NOT NULL CHECK(FriendlyMonsterKills >= 0),  -- How many jungle camps on your side did they take
-	EnemyMonsterKills INTEGER NOT NULL CHECK(EnemyMonsterKills >= 0),        -- How many jungle camps on the enemy side did they take
+	FriendlyMonstersKilled INTEGER NOT NULL CHECK(FriendlyMonstersKilled >= 0),  -- How many jungle camps on your side did they take
+	EnemyMonstersKilled INTEGER NOT NULL CHECK(EnemyMonstersKilled >= 0),        -- How many jungle camps on the enemy side did they take
 	GoldAtTen INTEGER NOT NULL CHECK(GoldAtTen >= 0),
 	XpAtTen INTEGER NOT NULL CHECK(XpAtTen >=0 ),
 	CsAtTen INTEGER NOT NULL CHECK(CsAtTen >= 0),
@@ -172,19 +172,18 @@ CREATE TABLE IF NOT EXISTS ProLoL.Objectives(
 	GameID INTEGER NOT NULL,
 	TeamID INTEGER NOT NULL,
 	
-	FirstTower INTEGER NOT NULL CHECK(FirstTower IS 1 OR 0),
-	FirstMidTower INTEGER NOT NULL CHECK(FirstMidTower IS 1 OR 0),
-	FirstToThreeTowers INTEGER NOT NULL CHECK(FirstToThreeTowers IS 1 OR 0),
-	FirstDragon INTEGER NOT NULL CHECK(FirstDragon IS 1 OR 0),
-	FirstBaron INTEGER NOT NULL CHECK(FirstBaron IS 1 OR 0),
+	FirstTower INTEGER NOT NULL CHECK(FirstTower IS 1 OR FirstTower IS 0),
+	FirstMidTower INTEGER NOT NULL CHECK(FirstMidTower IS 1 OR FirstMidTower IS 0),
+	FirstToThreeTowers INTEGER NOT NULL CHECK(FirstToThreeTowers IS 1 OR FirstToThreeTowers IS 0),
+	FirstDrake INTEGER NOT NULL CHECK(FirstDrake IS 1 OR FirstDrake IS 0),
+	FirstBaron INTEGER NOT NULL CHECK(FirstBaron IS 1 OR FirstBaron IS 0),
 	Heralds INTEGER NOT NULL CHECK(Heralds >= 0),
 	Barons INTEGER NOT NULL CHECK(Barons >= 0),
-	Dragons INTEGER NOT NULL CHECK(Dragons >= 0 AND Dragons <= 5),
-	ElementalDrakes INTEGER NOT NULL CHECK(ElementalDrakes >= 0 AND ElementalDrakes <= 5),
-	InfernalDrakes INTEGER NOT NULL CHECK(InfernalDrakes >= 0 AND InfernalDrakes <= 5),
-	MountainDrakes INTEGER NOT NULL CHECK(MountainDrakes >= 0 AND MountainDrakes <= 5),
-	CloudDrakes INTEGER NOT NULL CHECK(CloudDrakes >= 0 AND CloudDrakes <= 5),
-	OceanDrakes INTEGER NOT NULL CHECK(OceanDrakes >= 0 AND OceanDrakes <= 5),
+	Drakes INTEGER NOT NULL CHECK(Drakes >= 0 AND Drakes < 6),
+	InfernalDrakes INTEGER NOT NULL CHECK(InfernalDrakes >= 0 AND InfernalDrakes < 6),
+	MountainDrakes INTEGER NOT NULL CHECK(MountainDrakes >= 0 AND MountainDrakes < 6),
+	CloudDrakes INTEGER NOT NULL CHECK(CloudDrakes >= 0 AND CloudDrakes < 6),
+	OceanDrakes INTEGER NOT NULL CHECK(OceanDrakes >= 0 AND OceanDrakes < 6),
 	ElderDrakes INTEGER NOT NULL CHECK(ElderDrakes >= 0),           -- Technically not an upper bound on the number of Elder Drakes a team could theoretically obtain.
 	Towers INTEGER NOT NULL CHECK(Towers >= 0),           -- While Towers don't respawn I'm not sure if destroying Azir towers would count towards this number. If they do, then in the edge case no limit exists on the upper bound.
 	Inhibitors INTEGER NOT NULL CHECK(Inhibitors >= 0),        
