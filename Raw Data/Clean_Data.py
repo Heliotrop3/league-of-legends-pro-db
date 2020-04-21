@@ -68,18 +68,6 @@ def create_bans_sql(ChampionID, GameID, BanID, TeamID):
     BanID += 1
     return sql_str, BanID
 
-# Dictionary Method for creating the Objectives.sql file.
-##def create_objectives_sql(Dictionary, GameID):
-##    temp_str = "INSERT INTO Objectives (GameID,"
-##    temp_str2 = "VALUES ({},".format(GameID)
-##    items = list(Dictionary.items())
-##    for i in range(len(items)-1):
-##        temp_str = " ".join([temp_str, "{},".format(items[i][0])])
-##        temp_str2 = " ".join([temp_str2, "{},".format(items[i][1])])
-##    temp_str = " ".join([temp_str, " {})".format(items[i+1][0])])
-##    temp_str2 = " ".join([temp_str2, "{})".format(items[i+1][1])])
-##    return " ".join([temp_str, temp_str2, "\n"])
-     
 ###############################################
 
 # Connect to the database
@@ -408,7 +396,6 @@ for match in MatchResults:                                                      
         
     for team in sorted(TeamObjectives[match]):                                                  # Iterate across each team in a given match
         ObjectivesTemp = TeamObjectivesTuple(**TeamObjectives[match][team])                     # Store the teams objective control stats into the appropriate named tuple
-        ##e.write(create_objectives_sql(TeamObjectives[match][team], GameID))                   ## Dictionary Method of parsing the information
         TeamObjectivesQuery = create_sql(ObjectivesTemp, "Objectives", GameID)                  # Pass the named tuple to a function which parses the data into a SQL string
         e.write(TeamObjectivesQuery)                                                            # Write the SQL query to the SQL file associated with the Team's Objective control performance                                                   # 
 
