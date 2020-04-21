@@ -1,14 +1,18 @@
 # Author: Tyler Huffman
-# Last Modified: 2020-04-20
+# Last Modified: 2020-04-21
 # TODO: Figure out if there's a more effecient way to generate the SQL queries
 from datetime import date, datetime, time
 from collections import defaultdict, namedtuple
 import pandas as pd
 import sqlite3
 
-
 ################--- Functions ---################
 
+# Convert the GameLength from seconds to a datetime object
+def parse_game_length(seconds):
+    return datetime.strptime((":".join([str(int(seconds / 3600)), str(int((seconds % 3600) /60 )), str(int((seconds % 60)% 60))])),'%H:%M:%S').time()
+
+# Given a PlayerID, determine their position
 def find_player_pos(Dictionary, Player):
     for key in position_ids:
         if position_ids[key] == Player.position:
@@ -17,27 +21,69 @@ def find_player_pos(Dictionary, Player):
 
 # Given a named tuple and a list of metrics, transfer the metrics from the tuple to the dict
 def update_ledger(Dictionary, NamedTuple, metrics):
-    print(NamedTuple)
-    # Create a dictionary via grabbing the desired metrics as keys and their associated values as... well values.
-    result = {word: int(getattr(NamedTuple, word)) for word in metrics}
-    # Store the resulting dictionary in the Dictionary under the GameID then TeamID
-    Dictionary[NamedTuple.gameid][NamedTuple.TeamID] = result
+    result = {word: int(getattr(NamedTuple, word)) for word in metrics}  # Create a dictionary via grabbing the desired metrics as keys and their associated values as... well values.
+    Dictionary[NamedTuple.gameid][NamedTuple.TeamID] = result            # Store the generated dictionary in the passed Dictionary under the given game and appropriate team
     return Dictionary
 
+"""
+Given a named tuple and a list of metrics, transfer the metrics from the tuple to the dict
+Same idea as update_ledger EXCEPT we store the results under the player instead of the team.
 
+-- Look into combining update_ledger with and this
+"""
+def player_update_ledger(Dictionary, NamedTuple, metrics):
+    result = {word: int(getattr(NamedTuple, word)) for word in metrics}  # Create a dictionary via grabbing the desired metrics as keys and their associated values as... well values.
+    Dictionary[NamedTuple.gameid][NamedTuple.PlayerID] = result          # Store the generated dictionary in the passed Dictionary under the given game and respective player
+    return Dictionary
+
+"""
+Provide a named tuple, the table where you want to add the data, and a GameID
+to the function. The function will return a string representing a SQL query.
+"""
+def create_sql(NamedTuple, TableToWrite, GameID):
+    str1 = "INSERT INTO {} (GameID,".format(TableToWrite)
+    str2 = "VALUES({},".format(GameID)    
+    for i in range(len(NamedTuple._fields)-1):
+        str1 = " ".join([str1, "{},".format(sorted(NamedTuple._fields)[i])])
+        
+        if isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), datetime):
+            str2 = " ".join([str2, "DATETIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
+
+        elif isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), time):
+            str2 = " ".join([str2, "TIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
+            
+        else:
+            str2 = " ".join([str2, "{},".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
+    str1 = " ".join([str1, "{})".format(sorted(NamedTuple._fields)[i+1])])
+    str2 = " ".join([str2, "{});\n".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i+1]))])
+    return(" ".join([str1,str2]))
+
+"""
+Create a SQL query for inserting a teams bans
+
+-- Tracking ban order should be added for next ban predicitions
+"""
 def create_bans_sql(ChampionID, GameID, BanID, TeamID):
     sql_str = "INSERT INTO Bans (BanID, GameID, TeamID, ChampionID) VALUES({}, {}, {}, {});\n".format(BanID, GameID, TeamID, ChampionID)
     BanID += 1
     return sql_str, BanID
- 
+
+# Dictionary Method for creating the Objectives.sql file.
+##def create_objectives_sql(Dictionary, GameID):
+##    temp_str = "INSERT INTO Objectives (GameID,"
+##    temp_str2 = "VALUES ({},".format(GameID)
+##    items = list(Dictionary.items())
+##    for i in range(len(items)-1):
+##        temp_str = " ".join([temp_str, "{},".format(items[i][0])])
+##        temp_str2 = " ".join([temp_str2, "{},".format(items[i][1])])
+##    temp_str = " ".join([temp_str, " {})".format(items[i+1][0])])
+##    temp_str2 = " ".join([temp_str2, "{})".format(items[i+1][1])])
+##    return " ".join([temp_str, temp_str2, "\n"])
+     
 ###############################################
 
-# Convert the GameLength from seconds to a datetime object
-def parse_game_length(seconds):
-    return datetime.strptime((":".join([str(int(seconds / 3600)), str(int((seconds % 3600) /60 )), str(int((seconds % 60)% 60))])),'%H:%M:%S').time()
-
 # Connect to the database
-conn = sqlite3.connect('PATH TO DATABASE HERE')
+conn = sqlite3.connect(r'C:\Users\T\Documents\GitHub\league-of-legends-pro-db\ProLoL.db')
 # Create an object to interact with the db
 c = conn.cursor()
 
@@ -164,9 +210,11 @@ data['ChampionID'] = data['ChampionID'].replace({'Kai\'sa':'Kai\'Sa',
                                                  'Cho\'gath':'Cho\'Gath',
                                                  'Kog\'maw':'Kog\'Maw'})
 
-##### Grab onlt the LCS and Academy Teams. If not filtering by region, comment out the below line
+# Grab onlt the LCS and Academy Teams.
+#### If not filtering by region, comment out the below line
 data =  data[data['league'].isin(['LCS','LCS.A'])]
 #####
+
 # Capitalize the position abbreviations. This enables the mapping of our db's PositionIDs over the provided abbreviations
 data['position'] = data['position'].str.capitalize()
 # Substitute our PlayerIDs, TeamIDs, ChampionIDs, and PositionIDs in place of the provided values.
@@ -178,7 +226,14 @@ data.loc[:,'position'] = data['position'].map(position_ids)
 # Grab the rows consisting of the team objective stats
 Teams = data[data['PlayerID'].isnull()]     # Alternatively, something like "NATeams['position'] == 'team'" would also work
 
-# Find any  players not in the database. (Because I have a contract aspect to the db currently I'm manually adding players to the db and SQL files)
+"""
+Find any  players not in the database.
+
+Because I have a contract aspect to the db currently I'm manually adding players to the db and SQL files.
+Ideally I would either automate the process of adding player's contracts or just remove the contracts
+table from the schema entirely. I'll need to explore and weigh my options as it relates to creating a
+robust League of Legends db
+"""
 missing = Teams[(Teams.PlayerID) & (Teams.player.notnull())]
 if len(set(missing['player'])) > 0:
     print("Error: {} Player(s) are missing from the Dictionary".format(len(set(missing['player']))))
@@ -187,9 +242,7 @@ if len(set(missing['player'])) > 0:
 
 # Drop the team rows from the Player Dataframe
 Players = data[data['player'].notnull()]
-##print(set(Players['player']))
-##print(set(Players['PlayerID']))
-##input()
+
 # Create a list of non-player performance metrics
 non_player_stats = ['url',
                     'date',
@@ -222,7 +275,6 @@ Players = Players.drop(non_player_stats,axis=1)
 ## Uncomment and open the file generated by the below line to see what the Players df looks like
 ##Players.to_csv('Player Stats.csv', index=False)
 
-
 # As it stands, I need this information in both dataframes. So I sneak it to the front of the list
 non_player_stats.insert(0,'patch')
 non_player_stats.insert(0,'result')
@@ -241,8 +293,7 @@ Teams.loc[:,'ban2'] = Teams['ban2'].replace(champion_ids)
 Teams.loc[:,'ban3'] = Teams['ban3'].replace(champion_ids)
 Teams.loc[:,'ban4'] = Teams['ban4'].replace(champion_ids)
 Teams.loc[:,'ban5'] = Teams['ban5'].replace(champion_ids)
-
-## Uncomment the below line to see what the Teams df looks like after the mapping
+# Uncomment the below line to see what the Teams df looks like after the mapping
 ##Teams.to_csv('Team_Stats.csv', index=False)
 
 """
@@ -259,72 +310,78 @@ PlayerPerformances = defaultdict(lambda: defaultdict(dict))
 TeamObjectives = defaultdict(lambda: defaultdict(dict))
 TeamBans = defaultdict(lambda: defaultdict(dict))
 
+# Define which fields/keys we want for the TeamBans, TeamObjectives, and PlayerPerformances dicts
 BanMetrics = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5',  'TeamID']
 TeamObjectiveMetrics = ['FirstDrake', 'InfernalDrakes','MountainDrakes', 'CloudDrakes',
                         'OceanDrakes', 'ElderDrakes', 'Heralds', 'FirstBaron', 'Barons',
                         'FirstTower', 'Towers', 'FirstMidTower', 'FirstToThreeTowers',
                         'Inhibitors', 'TeamID']
-PlayerPerformanceMetrics = ['Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
+PlayerPerformanceMetrics = ['PlayerID','Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
                             'FirstBloodKill', 'FirstBloodAssist', 'FirstBloodVictim', 'DamageToChampions', 'WardsPlaced', 'WardsKilled',
                             'ControlWardsBought', 'VisionScore', 'TotalGold', 'EarnedGold', 'GoldSpent', 'MinionKills', 'FriendlyMonstersKilled',
-                            'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen', 'PlayerID','TeamID']
+                            'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen']
 
 
-##### Broken here
-# Iterate over the rows in our Teams df
-for TeamResult in Teams.itertuples():
-    print(TeamResult)
-    input()
-    # If the match has not been recorded
-    if TeamResult.gameid not in MatchResults:
-        # Parse and add the date to the dict
-        MatchResults[TeamResult.gameid]['DatePlayed'] = datetime.strptime(TeamResult.date, '%m/%d/%Y %M:%S')
-        # Parse and add the game length to the dict
-        MatchResults[TeamResult.gameid]['GameLength'] = parse_game_length(TeamResult.gamelength)
-        # Parse and add the patch to the dict
-        MatchResults[TeamResult.gameid]['OnPatch'] = TeamResult.patch
+## Thought: Move the writing of the player performances here. If successful, investigate moving other file operations here
+for TeamResult in Teams.itertuples():                                                                        # Iterate over the Team rows as named tuples
 
+    ### DEBUGGING ###
+##    print("Team Result\n" + ("="*15)+ "\n{}".format(TeamResult))
+##    input()
+    #################
     
-    TeamObjectives = update_ledger(TeamObjectives, TeamResult, TeamObjectiveMetrics)
-    TeamBans = update_ledger(TeamBans, TeamResult, BanMetrics)
-    #print(TeamBans)
+    if TeamResult.gameid not in MatchResults:                                                                # If the match has not been recorded
+        MatchResults[TeamResult.gameid]['DatePlayed'] = datetime.strptime(TeamResult.date, '%m/%d/%Y %M:%S') # Parse and add the date to the dict
+        MatchResults[TeamResult.gameid]['GameLength'] = parse_game_length(TeamResult.gamelength)             # Parse and add the game length to the dict
+        MatchResults[TeamResult.gameid]['OnPatch'] = TeamResult.patch                                        # Record and add the game patch to the dict
+
+    TeamObjectives = update_ledger(TeamObjectives, TeamResult, TeamObjectiveMetrics)                         # Parse the objectives secured by the team
+    TeamBans = update_ledger(TeamBans, TeamResult, BanMetrics)                                               # Parse the champions banned by the team
+
+    ### DEBUGGING ###
+##    print(TeamBans)
+    #################
     
-    if TeamResult.side == 'Blue':
-        MatchResults[TeamResult.gameid]['BlueSideTeamID'] = TeamResult.TeamID
+    if TeamResult.side == 'Blue':                                                                            # Record which side the team played from                           
+        MatchResults[TeamResult.gameid]['BlueSideTeamID'] = TeamResult.TeamID    
     else:
         MatchResults[TeamResult.gameid]['RedSideTeamID'] = TeamResult.TeamID
-    if TeamResult.result == 1:          
-        MatchResults[TeamResult.gameid]['WinningTeamID'] = TeamResult.TeamID
+    if TeamResult.result == 1:                                                                               # Record whether the given team won the match
+        MatchResults[TeamResult.gameid]['WinningTeamID'] = TeamResult.TeamID     
         
-    temp = Players.loc[(Players['gameid'] == TeamResult.gameid) & (Players['TeamID'] == TeamResult.TeamID)]
-    print(temp['PlayerID'])
-    for Player in temp.itertuples():
-        MatchResults = find_player_pos(MatchResults, Player)
-        print(MatchResults)
-        input()
-        PlayerPerformances = update_ledger(PlayerPerformances, Player, PlayerPerformanceMetrics)
+    temp = Players.loc[(Players['gameid'] == TeamResult.gameid) & (Players['TeamID'] == TeamResult.TeamID)]  # Grab the players who played in the match for the team
+    for Player in temp.itertuples():                                                                         # Iterate over the named tuples of the participating players 
+        ### DEBUGGING ###
+        #print("Player\n" + ("="*15)+ "\n{}".format(Player))
+        #input()
+        #################
+
+        MatchResults = find_player_pos(MatchResults, Player)                                                 # Record which position they played in the match
+        PlayerPerformances = player_update_ledger(PlayerPerformances, Player, PlayerPerformanceMetrics)      # Record the player's performance in the given match
         
 print("Parsing Data Completed")
 
-#### DEBUGGING STATEMENTS
-#print(MatchResults.keys())
-#input()
-#print(PlayerPerformances['ESPORTSTMNT01/1291177'][16])
-##print(TeamObjectives['ESPORTSTMNT01/1291177'])
-#input()
+#### DEBUGGING ###
+##print(MatchResults.keys())
+##input()
+##print(PlayerPerformances['ESPORTSTMNT01/1291177'][16])
+##print(TeamObjectives['ESPORTSTMNT01/1291177'][13])
+##input()
 ##print(sorted(TeamObjectives['ESPORTSTMNT01/1291177'].keys()))
 ##input()
-####
+###################
 
 # Create named tuples to facilitate converting the data into SQL statements
 MatchResultsTuple = namedtuple('MatchResultsTuple', sorted(MatchResults['ESPORTSTMNT01/1291177']))
 PlayerPerformanceTuple = namedtuple('PlayerPerformanceTuple',sorted(PlayerPerformances['ESPORTSTMNT01/1291177'][16]))
-TeamObjectivesTuple = namedtuple('TeamObjectivesTuple',sorted(TeamObjectives['ESPORTSTMNT01/1291177'][16]))
 TeamBansTuple = namedtuple('TeamBansTuple',sorted(TeamBans['ESPORTSTMNT01/1291177'][16]))
+TeamObjectivesTuple = namedtuple('TeamObjectivesTuple',sorted(TeamObjectives['ESPORTSTMNT01/1291177'][13]))
 
 """
+Create files to hold the SQL queries generated by our functions
+
 I need to figure out if theres a better way to transform the data from the csv and into SQL.
-For some reason, I don't think having 3+ I/O Operations running in unison is effecient.
+For some reason, I don't think having 3+ I/O Operations running in unison is an effecient solution.
 """
 f = open("Matches.sql", "w")
 f.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
@@ -338,72 +395,34 @@ e.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
 m = open("Bans.sql", "w")
 m.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
 
-
-
-"""
-Provide a named tuple, the table where you want to add the data, and a GameID
-to the function. The function will return a string representing a SQL query.
-"""
-def create_sql(NamedTuple, TableToWrite, GameID):
-    str1 = "INSERT INTO {} (GameID,".format(TableToWrite)
-    str2 = "VALUES({},".format(GameID)    
-    for i in range(len(NamedTuple._fields)-1):
-        str1 = " ".join([str1, "{},".format(sorted(NamedTuple._fields)[i])])
-        
-        if isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), datetime):
-            str2 = " ".join([str2, "DATETIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
-
-        elif isinstance(getattr(NamedTuple,sorted(NamedTuple._fields)[i]), time):
-            str2 = " ".join([str2, "TIME(\'{}\'),".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
-            
-        else:
-            str2 = " ".join([str2, "{},".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i]))])
-    str1 = " ".join([str1, "{})".format(sorted(NamedTuple._fields)[i+1])])
-    str2 = " ".join([str2, "{});\n".format(getattr(NamedTuple,sorted(NamedTuple._fields)[i+1]))])
-    return(" ".join([str1,str2]))
-
-def find_player_name(player_id):
-    for key,value in player_ids.items():
-        if value == player_id:
-            return key
-# Initialize a psuedo GameID
-x = 1
+GameID = 1                                                                                      # Initialize a psuedo GameID and BanID
 BanID = 1
-# Iterate over the recorded matches
-for match in MatchResults:
-    print("Match: ",match)
-    # Store the contents of the match into our named tuple
-    MatchTemp = MatchResultsTuple(**MatchResults[match])
-    # Iterate across the players in the match
-    for player in sorted(PlayerPerformances[match]):
-        print(PlayerPerformances[match][player])
-        print("Player: {}".format(find_player_name(player)))
-        print("PlayerID: {}".format(player))
-        print("TeamID: {}".format(PlayerPerformances[match][player]['TeamID']))
-        input()
-        # Store the player data into another of our named tuples
-        PlayerTemp = PlayerPerformanceTuple(**PlayerPerformances[match][player])
-        # Write the returned SQL query to the file associated with the Player's performance
-        g.write(create_sql(PlayerTemp, "Performances", x))
-    # Iterate across the team's objective control stats of the given match
-    for team in sorted(TeamObjectives[match]):
-        # Store the team's objective stats in the named tuple associated with the Objectives
-        ObjectivesTemp = TeamObjectivesTuple(**TeamObjectives[match][team])
-        # Write the returned SQL query to the file associated with the Teams's Objective Control
-        e.write(create_sql(ObjectivesTemp, "Objectives", x))
-    for team in sorted(TeamBans[match]):
-        for ban in TeamBans[match][team]:
-            sql_query, BanID = create_bans_sql(TeamBans[match][team][ban], x, BanID, team)
-            m.write(sql_query)
-    # Write the returned SQL query relating to when, what patch, and who played in the game to the appropriate file
-    f.write(create_sql(MatchTemp, "Games", x))
-    # Increase the psuedo GameID
-    x += 1
-    
+for match in MatchResults:                                                                      # Iterate over the recorded matches
+    MatchTemp = MatchResultsTuple(**MatchResults[match])                                        # Store the contents of the match into the appropriate named tuple
+    f.write(create_sql(MatchTemp, "Games", GameID))                                             # Write the returned SQL query relating to when, what patch, and who played in the game to the appropriate file
+
+    for player in sorted(PlayerPerformances[match]):                                            # Iterate across the players in the match
+        PlayerTemp = PlayerPerformanceTuple(**PlayerPerformances[match][player])                # Store the player data into the appropriate named tuple
+        PlayerPerformanceQuery = create_sql(PlayerTemp, "Performances", GameID)                 # Pass the named tuple to a function which parses the data into a SQL string
+        g.write(PlayerPerformanceQuery)                                                         # Write the SQL query to the SQL file associated with the Player's performance
+        
+    for team in sorted(TeamObjectives[match]):                                                  # Iterate across each team in a given match
+        ObjectivesTemp = TeamObjectivesTuple(**TeamObjectives[match][team])                     # Store the teams objective control stats into the appropriate named tuple
+        ##e.write(create_objectives_sql(TeamObjectives[match][team], GameID))                   ## Dictionary Method of parsing the information
+        TeamObjectivesQuery = create_sql(ObjectivesTemp, "Objectives", GameID)                  # Pass the named tuple to a function which parses the data into a SQL string
+        e.write(TeamObjectivesQuery)                                                            # Write the SQL query to the SQL file associated with the Team's Objective control performance                                                   # 
+
+        for ban in TeamBans[match][team]:                                                       # Iterate over the team's bans for the game
+            sql_query, BanID = create_bans_sql(TeamBans[match][team][ban], GameID, BanID, team) # Generate a SQL query based off of the ChampionID, GameID, BanID and TeamID
+            m.write(sql_query)                                                                  # Write the SQL query to the SQL file associated with the Team's bans
+    GameID += 1                                                                                 # Increase the psuedo GameID
+
+# Add an End Transaction statement to the end of each file
 f.write("\n\nEND TRANSACTION;")
 g.write("\n\nEND TRANSACTION;")
 e.write("\n\nEND TRANSACTION;")
 m.write("\n\nEND TRANSACTION;")
+# Close the files
 f.close()
 g.close()
 e.close()
