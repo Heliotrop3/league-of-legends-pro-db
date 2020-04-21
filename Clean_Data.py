@@ -4,7 +4,7 @@
 from datetime import date, datetime, time
 from collections import defaultdict, namedtuple
 import pandas as pd
-import sqlite3
+import sqlite3, os
 
 ################--- Functions ---################
 
@@ -71,7 +71,7 @@ def create_bans_sql(ChampionID, GameID, BanID, TeamID):
 ###############################################
 
 # Connect to the database
-conn = sqlite3.connect(r'C:\Users\T\Documents\GitHub\league-of-legends-pro-db\ProLoL.db')
+conn = sqlite3.connect('ProLoL.db')
 # Create an object to interact with the db
 c = conn.cursor()
 
@@ -100,6 +100,8 @@ for row in c.execute('SELECT PositionID, PositionAbbrv FROM Positions;'):
     position_ids[row[1]] = int(row[0])
 #print(position_ids)
 
+# Change working directory to where the csv file is stored
+os.chdir('Raw Data')
 # Read in the CSV file containing the data
 data = pd.read_csv("2020-spring-match-data-OraclesElixir-2020-04-13d.csv",low_memory=False)
 
