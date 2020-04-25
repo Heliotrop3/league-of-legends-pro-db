@@ -131,6 +131,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Games(
 CREATE TABLE IF NOT EXISTS ProLoL.Performances(
 	GameID INTEGER NOT NULL,
 	PlayerID INTEGER NOT NULL,
+	ChampionID INTEGER NOT NULL,
 	
 	Kills INTEGER NOT NULL CHECK(Kills >= 0),
 	Deaths INTEGER NOT NULL CHECK(Deaths >= 0),
@@ -166,6 +167,8 @@ CREATE TABLE IF NOT EXISTS ProLoL.Performances(
 		REFERENCES Games (GameID)
 	FOREIGN KEY (PlayerID)
 		REFERENCES Players (PlayerID)
+	FOREIGN KEY (ChampionID)
+		REFERENCES Champions (ChampionID)
 );
 
 CREATE TABLE IF NOT EXISTS ProLoL.Objectives(
@@ -199,6 +202,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Bans(
     GameID INTEGER NOT NULL,
     TeamID INTEGER NOT NULL,
     ChampionID INTEGER NOT NULL,
+	BanPosition INTEGER NOT NULL CHECK(BanPosition > 0 AND BanPosition < 6),
     
     FOREIGN KEY (GameID) 
         REFERENCES Games (GameID)
