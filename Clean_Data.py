@@ -63,8 +63,8 @@ Create a SQL query for inserting a teams bans
 
 -- Tracking ban order should be added for next ban predicitions
 """
-def create_bans_sql(ChampionID, GameID, BanID, TeamID):
-    sql_str = "INSERT INTO Bans (BanID, GameID, TeamID, ChampionID) VALUES({}, {}, {}, {});\n".format(BanID, GameID, TeamID, ChampionID)
+def create_bans_sql(GameID, TeamID, BanID, BanNo, ChampionID):
+    sql_str = "INSERT INTO Bans (GameID, TeamID, BanID, BanPosition, ChampionID) VALUES({}, {}, {}, {}, {});\n".format(GameID, TeamID, BanID, BanNo, ChampionID)
     BanID += 1
     return sql_str, BanID
 
@@ -301,12 +301,12 @@ TeamObjectives = defaultdict(lambda: defaultdict(dict))
 TeamBans = defaultdict(lambda: defaultdict(dict))
 
 # Define which fields/keys we want for the TeamBans, TeamObjectives, and PlayerPerformances dicts
-BanMetrics = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5',  'TeamID']
+BanMetrics = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5']
 TeamObjectiveMetrics = ['FirstDrake', 'InfernalDrakes','MountainDrakes', 'CloudDrakes',
                         'OceanDrakes', 'ElderDrakes', 'Heralds', 'FirstBaron', 'Barons',
                         'FirstTower', 'Towers', 'FirstMidTower', 'FirstToThreeTowers',
                         'Inhibitors', 'TeamID']
-PlayerPerformanceMetrics = ['PlayerID','Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
+PlayerPerformanceMetrics = ['PlayerID', 'ChampionID', 'Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
                             'FirstBloodKill', 'FirstBloodAssist', 'FirstBloodVictim', 'DamageToChampions', 'WardsPlaced', 'WardsKilled',
                             'ControlWardsBought', 'VisionScore', 'TotalGold', 'EarnedGold', 'GoldSpent', 'MinionKills', 'FriendlyMonstersKilled',
                             'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen']
@@ -357,8 +357,8 @@ print("Parsing Data Completed")
 ##print(PlayerPerformances['ESPORTSTMNT01/1291177'][16])
 ##print(TeamObjectives['ESPORTSTMNT01/1291177'][13])
 ##input()
-##print(sorted(TeamObjectives['ESPORTSTMNT01/1291177'].keys()))
-##input()
+#print(TeamBans['ESPORTSTMNT01/1291177'][16])
+#input()
 ###################
 
 # Create named tuples to facilitate converting the data into SQL statements
@@ -399,10 +399,10 @@ for match in MatchResults:                                                      
     for team in sorted(TeamObjectives[match]):                                                  # Iterate across each team in a given match
         ObjectivesTemp = TeamObjectivesTuple(**TeamObjectives[match][team])                     # Store the teams objective control stats into the appropriate named tuple
         TeamObjectivesQuery = create_sql(ObjectivesTemp, "Objectives", GameID)                  # Pass the named tuple to a function which parses the data into a SQL string
-        e.write(TeamObjectivesQuery)                                                            # Write the SQL query to the SQL file associated with the Team's Objective control performance                                                   # 
+        e.write(TeamObjectivesQuery)                                                            # Write the SQL query to the SQL file associated with the Team's Objective control performance                                                   #
 
         for ban in TeamBans[match][team]:                                                       # Iterate over the team's bans for the game
-            sql_query, BanID = create_bans_sql(TeamBans[match][team][ban], GameID, BanID, team) # Generate a SQL query based off of the ChampionID, GameID, BanID and TeamID
+            sql_query, BanID = create_bans_sql(GameID, team, BanID, ban[-1], TeamBans[match][team][ban]) # Generate a SQL query based off of the ChampionID, GameID, BanID and TeamID
             m.write(sql_query)                                                                  # Write the SQL query to the SQL file associated with the Team's bans
     GameID += 1                                                                                 # Increase the psuedo GameID
 
