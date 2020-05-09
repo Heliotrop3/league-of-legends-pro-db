@@ -149,7 +149,8 @@ champions = ['Aatrox',
              'Zyra'
              ]
 
-with open('Champions.sql', 'w') as f: 
+with open('Champions.sql', 'w') as f:
+    f.write("INSERT INTO Champions (ChampionID, ChampionName) VALUES ({},\'{}\');\n".format(0,'Missed Ban'))
     for i in range(1,len(champions)+1):
         f.write("INSERT INTO Champions (ChampionID, ChampionName) VALUES ({},\'{}\');\n".format(i, champions[i-1]))
     
