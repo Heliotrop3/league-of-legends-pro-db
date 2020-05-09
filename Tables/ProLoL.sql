@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Players(
     Gender VARCHAR(1) NOT NULL CHECK(Gender IS 'M' OR Gender IS 'F'),
     ProHandle VARCHAR(25) NOT NULL,
     PositionID INTEGER NOT NULL,
-	ContractID INTEGER,
+	ContractID INTEGER, -- Either assign a default value or will have to handle in the Sql code
 	--CountryID INTEGER NOT NULL,
 	
     FOREIGN KEY (PositionID)
@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Contracts(
 	FOREIGN KEY (PlayerID)
 		REFERENCES Players (PlayerID)
 );
+
 -- Table for the champions in the game
 CREATE TABLE IF NOT EXISTS ProLoL.Champions(
 	ChampionID INTEGER NOT NULL PRIMARY KEY,
@@ -80,6 +81,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Splits(
 
 CREATE TABLE IF NOT EXISTS ProLoL.Games(
 	GameID INTEGER PRIMARY KEY,
+	GameURL VARCHAR(MAX),
 	OnPatch FLOAT NOT NULL,
     DatePlayed DATE NOT NULL,
 	GameLength TIME NOT NULL,
