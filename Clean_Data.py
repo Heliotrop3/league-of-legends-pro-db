@@ -168,7 +168,8 @@ derivable_stats = ['teamkills',
                    'xpdiffat15',
                    'csdiffat15',
                    'dragons',
-                   'dragons (type unknown)'
+                   'dragons (type unknown)',
+                   'elementaldrakes'
 ]
 
 # Drop all derivable stats
@@ -178,7 +179,6 @@ data = data.drop(derivable_stats, axis = 1)
 data.rename(columns = {
                        'playerid'                : 'PlayerID',
                        'firstdragon'             : 'FirstDrake',
-                       'elementaldrakes'         : 'ElementalDrakes',
                        'infernals'               : 'InfernalDrakes',
                        'mountains'               : 'MountainDrakes',
                        'clouds'                  : 'CloudDrakes',
@@ -275,7 +275,6 @@ non_player_stats = ['url',
                     'gamelength',
                     'result',
                     'FirstDrake',
-                    'ElementalDrakes',
                     'InfernalDrakes',
                     'MountainDrakes',
                     'CloudDrakes',
