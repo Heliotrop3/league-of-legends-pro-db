@@ -1,3 +1,4 @@
+
 -- Add the countries
 INSERT INTO Countries (CountryID, CountryName, CountryAbbrv) VALUES (1,'United States', 'NA');
 INSERT INTO Countries (CountryID, CountryName, CountryAbbrv) VALUES (2,'Europe', 'EU');
@@ -24,10 +25,12 @@ INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (3,'Mid L
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (4,'Top Laner', 'Top' );
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (5,'Jungler'  , 'Jng' );
 
--- Add Teams:
 /*
-	
+	For a large database, one that has multiple splits, regions, and Teams, I would want to automate the generation of SQL queries for
+	the teams, the players, and the contracts.
 */
+
+-- Add Teams:
 BEGIN TRANSACTION;
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (1,  'Team Liquid'         , 1 );
 INSERT INTO Teams (TeamID, TeamName, CountryID ) VALUES (2,  'Cloud9'              , 1 );
@@ -474,6 +477,7 @@ UPDATE Players SET ContractID = 104 WHERE PlayerID = 104;
 END TRANSACTION;
 
 BEGIN TRANSACTION;
+INSERT INTO Champions (ChampionID, ChampionName) VALUES (0,'Missed Ban');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (1,'Aatrox');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (2,'Ahri');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (3,'Akali');
@@ -622,4 +626,5 @@ INSERT INTO Champions (ChampionID, ChampionName) VALUES (145,'Ziggs');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (146,'Zilean');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (147,'Zoe');
 INSERT INTO Champions (ChampionID, ChampionName) VALUES (148,'Zyra');
+
 END TRANSACTION;
