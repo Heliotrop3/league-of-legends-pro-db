@@ -55,19 +55,6 @@ CREATE TABLE IF NOT EXISTS ProLoL.Regions(
 );
 */
 
-CREATE TABLE IF NOT EXISTS ProLoL.Contracts(
-	ContractID INTEGER NOT NULL PRIMARY KEY,
-	TeamID INTEGER NOT NULL,
-	PlayerID INTEGER NOT NULL,
-	StartDate DATE,
-	EndDate DATE NOT NULL,
-	
-	FOREIGN KEY (TeamID)
-		REFERENCES Teams (TeamID)
-	FOREIGN KEY (PlayerID)
-		REFERENCES Players (PlayerID)
-);
-
 -- Table for the champions in the game
 CREATE TABLE IF NOT EXISTS ProLoL.Champions(
 	ChampionID INTEGER NOT NULL PRIMARY KEY,
