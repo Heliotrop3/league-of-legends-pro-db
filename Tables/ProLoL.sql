@@ -1,11 +1,10 @@
 CREATE TABLE IF NOT EXISTS ProLoL.Players(
     PlayerID INTEGER NOT NULL PRIMARY KEY,
-    FirstName VARCHAR(25) NOT NULL,
-    LastName VARCHAR(25) NOT NULL,
-    Gender VARCHAR(1) NOT NULL CHECK(Gender IS 'M' OR Gender IS 'F'),
+    FirstName VARCHAR(25),
+    LastName VARCHAR(25),
+    Gender VARCHAR(1) CHECK(Gender IS 'M' OR Gender IS 'F'),
     ProHandle VARCHAR(25) NOT NULL,
     PositionID INTEGER NOT NULL,
-	ContractID INTEGER, -- Either assign a default value or will have to handle in the Sql code
 	--CountryID INTEGER NOT NULL,
 	
     FOREIGN KEY (PositionID)
@@ -25,10 +24,21 @@ CREATE TABLE IF NOT EXISTS ProLoL.Positions(
 CREATE TABLE IF NOT EXISTS ProLoL.Teams(
     TeamID INTEGER NOT NULL PRIMARY KEY,
     TeamName VARCHAR(50) NOT NULL UNIQUE,
+	LeagueID INTEGER NOT NULL,
     CountryID INTEGER NOT NULL,
 	
 	FOREIGN KEY (CountryID)
 		REFERENCES Countries (CountryID)
+	FOREIGN KEY (LeagueID)
+		REFERENCES Leagues (LeagueID)
+);
+
+-- A table for tracking which teams are active in which leagues
+CREATE TABLE IF NOT EXISTS ProLoL.Leagues(
+	LeagueID INTEGER NOT NULL PRIMARY KEY,
+	CountryID INTEGER NOT NULL,             -- Where the League is located
+	LeagueName VARCHAR(50) NOT NULL UNIQUE,
+	LeagueAbbrv VARCHAR(10) NOT NULL UNIQUE
 );
 
 /* A table for holding the countries where the official professional scene is hosted in. A more advanced database would transform this table to hold a CountryName,
@@ -68,6 +78,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Splits(
 
 CREATE TABLE IF NOT EXISTS ProLoL.Games(
 	GameID INTEGER PRIMARY KEY,
+	---GameTypeID INTEGER NOT NULL, -- Need to explore how to delineate between normal games and tourney games 
 	GameURL VARCHAR(MAX),
 	OnPatch FLOAT NOT NULL,
     DatePlayed DATE NOT NULL,
