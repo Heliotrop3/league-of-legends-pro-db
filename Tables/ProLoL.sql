@@ -1,8 +1,8 @@
-CREATE TABLE IF NOT EXISTS ProLoL.Players(
+CREATE TABLE IF NOT EXISTS Players(
     PlayerID INTEGER NOT NULL PRIMARY KEY,
     FirstName VARCHAR(25),
     LastName VARCHAR(25),
-    Gender VARCHAR(1) CHECK(Gender IS 'M' OR Gender IS 'F'),
+    Gender VARCHAR(1) CHECK(Gender IS 'M' OR Gender IS 'F') DEFAULT 'M',
     ProHandle VARCHAR(25) NOT NULL,
     PositionID INTEGER NOT NULL,
 	--CountryID INTEGER NOT NULL,
@@ -14,14 +14,14 @@ CREATE TABLE IF NOT EXISTS ProLoL.Players(
 );
 
 -- A table for in-game roles
-CREATE TABLE IF NOT EXISTS ProLoL.Positions(
+CREATE TABLE IF NOT EXISTS Positions(
     PositionID INTEGER NOT NULL PRIMARY KEY,
     PositionName VARCHAR(20) NOT NULL UNIQUE,
 	PositionAbbrv VARCHAR(10) NOT NULL UNIQUE
 );
 
 -- A table containing the a team and their associated information
-CREATE TABLE IF NOT EXISTS ProLoL.Teams(
+CREATE TABLE IF NOT EXISTS Teams(
     TeamID INTEGER NOT NULL PRIMARY KEY,
     TeamName VARCHAR(50) NOT NULL UNIQUE,
 	LeagueID INTEGER NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Teams(
 );
 
 -- A table for tracking which teams are active in which leagues
-CREATE TABLE IF NOT EXISTS ProLoL.Leagues(
+CREATE TABLE IF NOT EXISTS Leagues(
 	LeagueID INTEGER NOT NULL PRIMARY KEY,
 	CountryID INTEGER NOT NULL,             -- Where the League is located
 	LeagueName VARCHAR(50) NOT NULL UNIQUE,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Leagues(
    who both play on the North American Server. Thus, they would both  have the RegionID associated with the North American Server, Germany, Norway, France etc 
    would have the RegionID associated with the European Union server. To that end, a Regions table is included but not (currently) utilized.
 */
-CREATE TABLE IF NOT EXISTS ProLoL.Countries(
+CREATE TABLE IF NOT EXISTS Countries(
     CountryID INTEGER NOT NULL PRIMARY KEY,
     CountryName VARCHAR(20) NOT NULL UNIQUE,
 	-- RegionID INTEGER NOT NULL, 
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Countries(
 	*/
 );
 /*
-CREATE TABLE IF NOT EXISTS ProLoL.Regions(
+CREATE TABLE IF NOT EXISTS Regions(
     RegionID INTEGER NOT NULL PRIMARY KEY,
     RegionName VARCHAR(20) NOT NULL UNIQUE,
 	RegionAbbrv VARCHAR(5) NOT NULL UNIQUE
@@ -66,20 +66,20 @@ CREATE TABLE IF NOT EXISTS ProLoL.Regions(
 */
 
 -- Table for the champions in the game
-CREATE TABLE IF NOT EXISTS ProLoL.Champions(
+CREATE TABLE IF NOT EXISTS Champions(
 	ChampionID INTEGER NOT NULL PRIMARY KEY,
 	ChampionName VARCHAR(30) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS ProLoL.Splits(
+CREATE TABLE IF NOT EXISTS Splits(
 	SplitID INTEGER NOT NULL PRIMARY KEY,
 	SplitSeason VARCHAR(10)
 );
 
-CREATE TABLE IF NOT EXISTS ProLoL.Games(
+CREATE TABLE IF NOT EXISTS Games(
 	GameID INTEGER PRIMARY KEY,
 	---GameTypeID INTEGER NOT NULL, -- Need to explore how to delineate between normal games and tourney games 
-	GameURL VARCHAR(MAX),
+	GameURL VARCHAR(225),
 	OnPatch FLOAT NOT NULL,
     DatePlayed DATE NOT NULL,
 	GameLength TIME NOT NULL,
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Games(
 	
 );
 
-CREATE TABLE IF NOT EXISTS ProLoL.Performances(
+CREATE TABLE IF NOT EXISTS Performances(
 	GameID INTEGER NOT NULL,
 	PlayerID INTEGER NOT NULL,
 	ChampionID INTEGER NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Performances(
 		REFERENCES Champions (ChampionID)
 );
 
-CREATE TABLE IF NOT EXISTS ProLoL.Objectives(
+CREATE TABLE IF NOT EXISTS Objectives(
 	GameID INTEGER NOT NULL,
 	TeamID INTEGER NOT NULL,
 	
@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS ProLoL.Objectives(
 		REFERENCES Teams (TeamID)
 );
 
-CREATE TABLE IF NOT EXISTS ProLoL.Bans(
+CREATE TABLE IF NOT EXISTS Bans(
 	BanID INTEGER NOT NULL PRIMARY KEY,
     GameID INTEGER NOT NULL,
     TeamID INTEGER NOT NULL,
