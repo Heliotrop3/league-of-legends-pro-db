@@ -1,6 +1,6 @@
 # Author: Tyler Huffman
 # Last Modified: 2020-04-21
-# TODO: Figure out if there's a more effecient way to generate the SQL queries
+# TODO: Clean up try and except statements, add regions to either teams, players, or both, and categorize season vs tournament games
 from datetime import date, datetime, time
 from collections import defaultdict, namedtuple
 import pandas as pd
@@ -67,7 +67,7 @@ def player_update_ledger(Dictionary, NamedTuple, metrics):
         input()
     #### THIS LINE IS WHY update_ledger AND player_update_ledger ARE SEPERATED! ####
     Dictionary[NamedTuple.gameid][NamedTuple.PlayerID] = result            # Store the generated dictionary in the passed Dictionary under the given game and respective player
-    ##############################################
+    ############################################################
     return Dictionary
 
 """
@@ -97,37 +97,54 @@ Create a SQL query for inserting a teams bans
 
 -- Tracking ban order should be added for next ban predicitions
 """
-def create_bans_sql(ChampionID, GameID, BanID, TeamID):
-    sql_str = "INSERT INTO Bans (BanID, GameID, TeamID, ChampionID) VALUES({}, {}, {}, {});\n".format(BanID, GameID, TeamID, ChampionID)
+def create_bans_sql(BanID, GameID, TeamID, ChampionID, BanPosition):
+    sql_str = "INSERT INTO Bans (BanID, GameID, TeamID, ChampionID, BanPosition) VALUES({}, {}, {}, {}, {});\n".format(BanID, GameID, TeamID, ChampionID, BanPosition)
     BanID += 1
     return sql_str, BanID
+# 
+def init_max_counter(Dictionary):
+    if not Dictionary:
+        return 0
+    return max(Dictionary.values())
 
 ###############################################
+player_ids = {}     # Use the player's prohandle as keys and a unique integer as a value
+team_ids = {}       # Create a dictionary where the team name is the key and the value is a unique integer
+champion_ids = {}   # Create a dictionary where the champion name is the key and the value is a unique integer
+position_ids = {}   # Create a dictionary where the position name is the key and the value is a unique integer
+
 conn = sqlite3.connect('ProLoL.db') # Connect to the database
 c = conn.cursor()                   # Create an object to interact with the db
 
-player_ids = {}                                                    # Use the player's prohandle as keys and a unique integer as a value
-for row in c.execute('SELECT PlayerID, ProHandle FROM Players;'):  # Grab the db's association of Players with PlayerIDs
-    player_ids[row[1]] = int(row[0])
-player_id_curr_max = max(player_ids.values())                      # Start a counter representing the total number of players recorded for adding players to the DB
+try:                                                                          # Try and read in any existing values from the tables
+    for row in c.execute('SELECT PlayerID, ProHandle FROM Players;'):         # Grab the db's association of Players with PlayerIDs
+        player_ids[row[1]] = int(row[0])
 
-team_ids = {}                                                # Create a dictionary where the team name is the key and the value is a unique integer
-for row in c.execute('SELECT TeamID, TeamName FROM Teams;'): # Grab the db's association of Teams with TeamIDs
-    team_ids[row[1]] = int(row[0])   
-team_id_curr_max = max(team_ids.values())                    # Start a counter representing the total number of teams recorded for adding teams to the DB
+    for row in c.execute('SELECT TeamID, TeamName FROM Teams;'):              # Grab the db's association of Teams with TeamIDs
+        team_ids[row[1]] = int(row[0])   
 
-champion_ids = {}                                                        # Create a dictionary where the champion name is the key and the value is a unique integer
-for row in c.execute('SELECT ChampionID, ChampionName FROM Champions;'): # Grab the db's association of Champions with ChampionIDs
-    champion_ids[row[1]] = int(row[0])
-champion_id_curr_max = max(champion_ids.values())                        # Start a counter representing the total number of champions recorded for adding champs to the DB
+    for row in c.execute('SELECT ChampionID, ChampionName FROM Champions;'):  # Grab the db's association of Champions with ChampionIDs
+        champion_ids[row[1]] = int(row[0])
 
-position_ids = {}                                                         # Create a dictionary where the position name is the key and the value is a unique integer
+except sqlite3.OperationalError:                # If the table does not exist then execute the SQL file containing the schema
+    with open('Tables/ProLoL.sql', 'r') as sql_query:
+        schema =  sql_query.read()
+    c.executescript(schema)
+    
+    with open('Initialize.sql', 'r') as sql_query:
+        init = sql_query.read()
+    c.executescript(init)
+
 for row in c.execute('SELECT PositionID, PositionAbbrv FROM Positions;'): # Grab the db's association of Positions with PositionIDs
     position_ids[row[1]] = int(row[0])
+ 
+player_id_curr_max = init_max_counter(player_ids)     # Start a counter representing the total number of players recorded for adding players to the DB
+team_id_curr_max = init_max_counter(team_ids)         # Start a counter representing the total number of teams recorded for adding teams to the DB
+champion_id_curr_max = init_max_counter(champion_ids) # Start a counter representing the total number of champions recorded for adding champs to the DB
+champion_ids['Missed Ban'] = 0
 
-os.chdir('Raw Data')                                                                                       # Change working directory to where the csv file is stored
-
-data = pd.read_csv("2020 spring match data OraclesElixir 2020-05-15.csv",low_memory=False, na_filter=True) # Read in the CSV file containing the data
+data = pd.read_csv("Raw Data/2020 spring match data OraclesElixir 2020-05-15.csv",low_memory=False, na_filter=True) # Read in the CSV file containing the data
+data = data[data['league'].isin(['LCS','LCS.A', 'CBLOL', 'LEC', 'PCS', 'LCK', 'TCL'])]                              # Grab all teams except the LPL as they don't provide detailed data regarding their games
 
 # I'm aiming to have a database in strictly 3rd Normalized form. In short, I don't want any data I can derive.
 derivable_stats = ['teamkills',
@@ -232,20 +249,23 @@ for col in champion_cols:
 data['ChampionID'] = data['ChampionID'].str.strip().replace('',np.nan)
 
 ### Turn into function
-players = data[(data.player.notnull())]
-for player in set(players['player']):
+pros = data[(data.player.notnull())]
+missing_pros = set(list())
+for player in set(pros['player']):
     if player not in list(player_ids.keys()):
         player_id_curr_max += 1
         player_ids[player] = player_id_curr_max
-        #print("{} was added to the dictionary with id {}".format(player, player_id_curr_max))
+        missing_pros.add(player)
+        print("{} was added to the dictionary with id {}".format(player, player_id_curr_max))
 #print()
 
-champions = data[data['ChampionID'].notnull()]
-for champion in set(champions['ChampionID']):
-    if champion not in list(champion_ids.keys()):
-        champion_id_curr_max += 1
-        champion_ids[champion] = champion_id_curr_max
-        print("{} was added to the dictionary with id {}".format(champion, champion_id_curr_max))
+champ_locs = ['ChampionID','ban1','ban2','ban3','ban4','ban5']
+for loc in champ_locs:
+    for champion in set(data[loc]):
+        if champion not in list(champion_ids.keys()):
+            champion_id_curr_max += 1
+            champion_ids[champion] = champion_id_curr_max
+            #print("{} was added to the dictionary with id {}".format(champion, champion_id_curr_max))
 #print()
 
 teams = data[data['position'] == 'team']
@@ -257,9 +277,6 @@ for team in set(teams['TeamID']):
 #print()
 ####
 
-
-data = data[data['league'].isin(['LCS','LCS.A', 'CBLOL', 'LEC', 'PCS', 'LCK', 'TCL'])] # Grab all teams except the LPL as they don't provide detailed data regarding their games
-
 data['position'] = data['position'].str.capitalize()                                   # Capitalize the position abbreviations. This enables the mapping of our db's PositionIDs over the provided abbreviations
 
 # Substitute our PlayerIDs, TeamIDs, ChampionIDs, and PositionIDs in place of the provided values.
@@ -269,11 +286,34 @@ data.loc[:,'ChampionID'] = data['ChampionID'].replace(champion_ids)
 data.loc[:,'position'] = data['position'].replace(position_ids)
 
 Teams = data[data['player'].isnull()]   # Grab the rows consisting of the team objective stats
-
-## Uncomment the below line to export the Teams df to a spreadsheet
-##Teams.to_csv('Team_Stats.csv', index=False)
-
 Players = data[data['player'].notnull()] # Drop the team rows from the Player Dataframe
+
+## Uncomment the below line to export the Teams and/or Players df to a spreadsheet
+##Teams.to_csv('Team_Stats.csv', index=False)
+##Players.to_csv('Player_Stats.csv', index=False)
+
+
+"""
+    After converting the positions to their integer value we add the players to the database.
+    By default Oracle Elixir's match dataset does not provide what role a player *generally*
+    plays. Instead it notes which lane a player resided in during laning phase.
+    
+    This leads to the edge case for assigning positions to a player when a player has played
+    in more than one lane. This is generally the result of a team making a strategic decision
+    to obtain a more favorable lane matchup. As conseqeunce, the swapped players are noted to
+    have played in their non-native lane.
+
+    The following for statement guards against the possibility of falsely assigning a player's
+    position. By using pandas' value_counts() we can obtain the frequency with which a player
+    has played in a particular lane. From there we assign their position by choosing the lane
+    with the highest frequency.
+"""
+if(len(missing_pros) > 0):                                              # Check that there are pros which don't have a record in the db
+    for pro in missing_pros:                                            # Iterate over each missing pro
+        temp = Players[(Players.player == pro)].position.value_counts() # Find the frequency of which lanes they played in
+        pos = temp.keys().tolist()[0]                                   # Grab the lane/position id
+        c.execute("INSERT INTO Players (PlayerID, ProHandle, PositionID) VALUES(?,?,?)",([player_ids[pro], pro, pos])) # Add the player's to the database
+    conn.commit() # Commit the inserts to the db
 
 # Create a list of non-player performance metrics
 non_player_stats = ['url',
@@ -301,7 +341,6 @@ non_player_stats = ['url',
                     'Inhibitors']
 
 Players = Players.drop(non_player_stats,axis=1) # From the dataframe consisting of the pro's performance, drop all stats not relating to the player
-###Players.to_csv('Player Stats.csv', index=False) ### Uncomment to see what the Players df looks like
 
 # As it stands, I need this information in both dataframes. So I sneak it to the front of the list
 non_player_stats.insert(0,'patch')
@@ -311,7 +350,9 @@ non_player_stats.insert(0,'TeamID')
 non_player_stats.insert(0,'gameid')
 
 Teams = Teams[non_player_stats]                # From the dataframe consisting of the team's performance, drop all stats NOT related to the objectives
-### Teams.to_csv('Pre Change.csv',index=False) ### Uncomment the below line to see what the Teams df looks like before applying the ChampionIDs across the team's bans
+
+## Uncomment the below line to export the Players df to a spreadsheet
+##Players.to_csv('Post_Change_Player_Stats.csv', index=False)
 
 """
   If any of the bans contain an nan, then a team failed to ban.
@@ -330,7 +371,8 @@ Teams.loc[:,'ban3'] = Teams['ban3'].replace(champion_ids)
 Teams.loc[:,'ban4'] = Teams['ban4'].replace(champion_ids)
 Teams.loc[:,'ban5'] = Teams['ban5'].replace(champion_ids)
 
-##Teams.to_csv('Team_Stats.csv', index=False) ### Uncomment to see what the Teams df looks like after the mapping
+## Uncomment to see what the Teams df looks like after the mapping
+##Teams.to_csv('Post_Change_Team_Stats.csv', index=False)
 
 #####################
 """
@@ -338,14 +380,10 @@ Teams.loc[:,'ban5'] = Teams['ban5'].replace(champion_ids)
     
     I could just use pandas' median function and fill in all nan values with the
     median of the dataset but I prefer to subset the data and use the median of
-    the player's performance.
-
-    A more complex 
+    the player's performance. 
 """
-#####
-missing_data = Players[Players.isna().any(axis=1)]              # Grab the rows with missing values
-##print(missing_data.shape)
 
+missing_data = Players[Players.isna().any(axis=1)]              # Grab the rows with missing values
 pros = set(missing_data.player)                                 # Extract the pros who have nan values
 for pro in pros:                                                # Iterate over each player with nan values
     temp = Players[(Players['player'] == pro)]                  # Grab the matches associated with the player
@@ -356,11 +394,8 @@ for pro in pros:                                                # Iterate over e
         for metric in cols:                                           # Calculate the median value for each missing metric and overwrite the nan value
             Players.at[loc, metric] = temp[metric].median(skipna=True)
             
-missing_data = Players[Players.isna().any(axis=1)]              # Grab the rows with missing values
-##print(missing_data.shape)
-##input()
+missing_data = Players[Players.isna().any(axis=1)]   # Grab the rows with missing values
 
-#####################
 
 """
 I need to work on the below code. Pretty sure there exists a more effecient way to handle data.
@@ -377,12 +412,12 @@ TeamObjectives = defaultdict(lambda: defaultdict(dict))
 TeamBans = defaultdict(lambda: defaultdict(dict))
 
 # Define which fields/keys we want for the TeamBans, TeamObjectives, and PlayerPerformances dicts
-BanMetrics = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5',  'TeamID']
+BanMetrics = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5']
 TeamObjectiveMetrics = ['FirstDrake', 'InfernalDrakes','MountainDrakes', 'CloudDrakes',
                         'OceanDrakes', 'ElderDrakes', 'Heralds', 'FirstBaron', 'Barons',
                         'FirstTower', 'Towers', 'FirstMidTower', 'FirstToThreeTowers',
                         'Inhibitors', 'TeamID']
-PlayerPerformanceMetrics = ['PlayerID','Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
+PlayerPerformanceMetrics = ['PlayerID','ChampionID','Kills', 'Deaths', 'Assists', 'DoubleKills', 'TripleKills', 'QuadraKills', 'PentaKills',
                             'FirstBloodKill', 'FirstBloodAssist', 'FirstBloodVictim', 'DamageToChampions', 'WardsPlaced', 'WardsKilled',
                             'ControlWardsBought', 'VisionScore', 'TotalGold', 'EarnedGold', 'GoldSpent', 'MinionKills', 'FriendlyMonstersKilled',
                             'EnemyMonstersKilled','GoldAtTen', 'XpAtTen','CsAtTen', 'GoldAtFifteen', 'XpAtFifteen', 'CsAtFifteen']
@@ -400,10 +435,11 @@ for TeamResult in Teams.itertuples():                                           
         MatchResults[TeamResult.gameid]['DatePlayed'] = datetime.strptime(TeamResult.date, '%m/%d/%Y %M:%S') # Parse and add the date to the dict  '%Y-%m-%d %H:%M:%S')
         MatchResults[TeamResult.gameid]['GameLength'] = parse_game_length(TeamResult.gamelength)             # Parse and add the game length to the dict
         MatchResults[TeamResult.gameid]['OnPatch'] = TeamResult.patch                                        # Record and add the game patch to the dict
-
+        MatchResults[TeamResult.gameid]['GameURL'] = '\'' + TeamResult.url + '\''
+    
     TeamObjectives = update_ledger(TeamObjectives, TeamResult, TeamObjectiveMetrics)                         # Parse the objectives secured by the team
     TeamBans = update_ledger(TeamBans, TeamResult, BanMetrics)                                               # Parse the champions banned by the team
-
+    
     ### DEBUGGING ###
 ##    print(TeamBans)
     #################
@@ -427,70 +463,38 @@ for TeamResult in Teams.itertuples():                                           
         
 print("Parsing Data Completed")
 
-#### DEBUGGING ###
-##print(MatchResults.keys())
-##input()
-##print(PlayerPerformances['ESPORTSTMNT01/1291177'][16])
-##print(TeamObjectives['ESPORTSTMNT01/1291177'][13])
-##input()
-##print(sorted(TeamObjectives['ESPORTSTMNT01/1291177'].keys()))
-##input()
-###################
+ex_match_id = list(PlayerPerformances.keys())[0]
+ex_player_id = list(PlayerPerformances[ex_match_id].keys())[0]
+ex_team_id = list(TeamBans[ex_match_id].keys())[0]
 
 # Create named tuples to facilitate converting the data into SQL statements
-MatchResultsTuple = namedtuple('MatchResultsTuple', sorted(MatchResults['ESPORTSTMNT01/1291177']))
-PlayerPerformanceTuple = namedtuple('PlayerPerformanceTuple',sorted(PlayerPerformances['ESPORTSTMNT01/1291177'][16]))
-TeamBansTuple = namedtuple('TeamBansTuple',sorted(TeamBans['ESPORTSTMNT01/1291177'][16]))
-TeamObjectivesTuple = namedtuple('TeamObjectivesTuple',sorted(TeamObjectives['ESPORTSTMNT01/1291177'][13]))
+MatchResultsTuple = namedtuple('MatchResultsTuple', sorted(MatchResults[ex_match_id]))
+PlayerPerformanceTuple = namedtuple('PlayerPerformanceTuple',sorted(PlayerPerformances[ex_match_id][ex_player_id]))
+TeamBansTuple = namedtuple('TeamBansTuple',sorted(TeamBans[ex_match_id][ex_team_id]))
+TeamObjectivesTuple = namedtuple('TeamObjectivesTuple',sorted(TeamObjectives[ex_match_id][ex_team_id]))
 
 """
-Create files to hold the SQL queries generated by our functions
-
-I need to figure out if theres a better way to transform the data from the csv and into SQL.
-For some reason, I don't think having 3+ I/O Operations running in unison is an effecient solution.
-
-I could just execute the queries directly in the database through python
+    Add the data to the database
 """
-f = open("Matches.sql", "w")
-f.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
-
-g = open("PlayerPerformances.sql", "w")
-g.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
-
-e = open("Objectives.sql", "w")
-e.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
-
-m = open("Bans.sql", "w")
-m.write('--- Auto-Generated SQL Queries ---\n\nBEGIN TRANSACTION;\n\n')
-
 GameID = 1                                                                                      # Initialize a psuedo GameID and BanID
 BanID = 1
 for match in MatchResults:                                                                      # Iterate over the recorded matches
     MatchTemp = MatchResultsTuple(**MatchResults[match])                                        # Store the contents of the match into the appropriate named tuple
-    f.write(create_sql(MatchTemp, "Games", GameID))                                             # Write the returned SQL query relating to when, what patch, and who played in the game to the appropriate file
+    c.execute(create_sql(MatchTemp, "Games", GameID))                                           # Write the returned SQL query relating to when, what patch, and who played in the game to the appropriate file
 
     for player in sorted(PlayerPerformances[match]):                                            # Iterate across the players in the match
         PlayerTemp = PlayerPerformanceTuple(**PlayerPerformances[match][player])                # Store the player data into the appropriate named tuple
         PlayerPerformanceQuery = create_sql(PlayerTemp, "Performances", GameID)                 # Pass the named tuple to a function which parses the data into a SQL string
-        g.write(PlayerPerformanceQuery)                                                         # Write the SQL query to the SQL file associated with the Player's performance
+        c.execute(PlayerPerformanceQuery)                                                       # Write the SQL query to the SQL file associated with the Player's performance
         
     for team in sorted(TeamObjectives[match]):                                                  # Iterate across each team in a given match
         ObjectivesTemp = TeamObjectivesTuple(**TeamObjectives[match][team])                     # Store the teams objective control stats into the appropriate named tuple
         TeamObjectivesQuery = create_sql(ObjectivesTemp, "Objectives", GameID)                  # Pass the named tuple to a function which parses the data into a SQL string
-        e.write(TeamObjectivesQuery)                                                            # Write the SQL query to the SQL file associated with the Team's Objective control performance                                                   # 
+        c.execute(TeamObjectivesQuery)                                                          # Write the SQL query to the SQL file associated with the Team's Objective control performance                                                   # 
 
         for ban in TeamBans[match][team]:                                                       # Iterate over the team's bans for the game
-            sql_query, BanID = create_bans_sql(TeamBans[match][team][ban], GameID, BanID, team) # Generate a SQL query based off of the ChampionID, GameID, BanID and TeamID
-            m.write(sql_query)                                                                  # Write the SQL query to the SQL file associated with the Team's bans
+            ChampionID = TeamBans[match][team][ban]
+            sql_query, BanID = create_bans_sql(BanID, GameID, team, ChampionID, ban[-1])        # Generate a SQL query based off of the ChampionID, GameID, BanID and TeamID
+            c.execute(sql_query)                                                                # Write the SQL query to the SQL file associated with the Team's bans
     GameID += 1                                                                                 # Increase the psuedo GameID
-
-# Add an End Transaction statement to the end of each file
-f.write("\n\nEND TRANSACTION;")
-g.write("\n\nEND TRANSACTION;")
-e.write("\n\nEND TRANSACTION;")
-m.write("\n\nEND TRANSACTION;")
-# Close the files
-f.close()
-g.close()
-e.close()
-m.close()
+conn.commit()
