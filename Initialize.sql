@@ -23,5 +23,3 @@ INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (2,'Suppo
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (3,'Mid Laner', 'Mid' );
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (4,'Top Laner', 'Top' );
 INSERT INTO Positions (PositionID, PositionName, PositionAbbrv) VALUES (5,'Jungler'  , 'Jng' );
-
-END TRANSACTION;
