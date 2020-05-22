@@ -5,12 +5,10 @@ CREATE TABLE IF NOT EXISTS Players(
     Gender VARCHAR(1) CHECK(Gender IS 'M' OR Gender IS 'F') DEFAULT 'M',
     ProHandle VARCHAR(25) NOT NULL,
     PositionID INTEGER NOT NULL,
-	--CountryID INTEGER NOT NULL,
+	--RegionID INTEGER NOT NULL,
 	
     FOREIGN KEY (PositionID)
         REFERENCES Positions (PositionID)
-	/*FOREIGN KEY (CountryID)
-		REFERENCES Countries (CountryID) */
 );
 
 -- A table for in-game roles
@@ -25,10 +23,10 @@ CREATE TABLE IF NOT EXISTS Teams(
     TeamID INTEGER NOT NULL PRIMARY KEY,
     TeamName VARCHAR(50) NOT NULL UNIQUE,
 	LeagueID INTEGER NOT NULL,
-    CountryID INTEGER NOT NULL,
+    RegionID INTEGER NOT NULL,
 	
-	FOREIGN KEY (CountryID)
-		REFERENCES Countries (CountryID)
+	FOREIGN KEY (RegionID)
+		REFERENCES Regions (RegionID)
 	FOREIGN KEY (LeagueID)
 		REFERENCES Leagues (LeagueID)
 );
@@ -36,34 +34,18 @@ CREATE TABLE IF NOT EXISTS Teams(
 -- A table for tracking which teams are active in which leagues
 CREATE TABLE IF NOT EXISTS Leagues(
 	LeagueID INTEGER NOT NULL PRIMARY KEY,
-	CountryID INTEGER NOT NULL,             -- Where the League is located
+	RegionID INTEGER NOT NULL,             -- Where the League is located
 	LeagueName VARCHAR(50) NOT NULL UNIQUE,
 	LeagueAbbrv VARCHAR(10) NOT NULL UNIQUE
 );
 
-/* A table for holding the countries where the official professional scene is hosted in. A more advanced database would transform this table to hold a CountryName,
-   CountryId and a RegionID where the RegionID references the server region the country plays on. For example, Canada and the United States are different countries 
-   who both play on the North American Server. Thus, they would both  have the RegionID associated with the North American Server, Germany, Norway, France etc 
-   would have the RegionID associated with the European Union server. To that end, a Regions table is included but not (currently) utilized.
+/* A table for holding the Regions where the official professional scene is hosted in.
 */
-CREATE TABLE IF NOT EXISTS Countries(
-    CountryID INTEGER NOT NULL PRIMARY KEY,
-    CountryName VARCHAR(20) NOT NULL UNIQUE,
-	-- RegionID INTEGER NOT NULL, 
-	CountryAbbrv VARCHAR(5) NOT NULL UNIQUE
-	
-	/*
-	FOREIGN KEY (RegionID)
-		REFERENCES Regions (RegionID)
-	*/
-);
-/*
 CREATE TABLE IF NOT EXISTS Regions(
     RegionID INTEGER NOT NULL PRIMARY KEY,
     RegionName VARCHAR(20) NOT NULL UNIQUE,
 	RegionAbbrv VARCHAR(5) NOT NULL UNIQUE
 );
-*/
 
 -- Table for the champions in the game
 CREATE TABLE IF NOT EXISTS Champions(
@@ -71,10 +53,6 @@ CREATE TABLE IF NOT EXISTS Champions(
 	ChampionName VARCHAR(30) NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS Splits(
-	SplitID INTEGER NOT NULL PRIMARY KEY,
-	SplitSeason VARCHAR(10)
-);
 
 CREATE TABLE IF NOT EXISTS Games(
 	GameID INTEGER PRIMARY KEY,
