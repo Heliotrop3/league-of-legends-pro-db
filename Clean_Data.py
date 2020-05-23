@@ -126,7 +126,7 @@ def player_update_ledger(Dictionary, NamedTuple, Metrics):
     #### ARE SEPERATED!
     # Store the generated dictionary in the passed Dictionary under the
     # given game and respective player
-    Dictionary[NamedTuple.gameid][NamedTuple.PlayerID] = result 
+    Dictionary[NamedTuple.gameid][NamedTuple.PlayerID] = result
     ############################################################
     return Dictionary
 
@@ -209,7 +209,7 @@ def create_bans_sql(BanID, GameID, TeamID, ChampID, BanPos):
                "").format(BanID, GameID, TeamID, ChampID, BanPos)
     BanID += 1
     return sql_str, BanID
-# 
+#
 def init_max_counter(Dictionary):
     if not Dictionary:
         return 0
@@ -229,13 +229,13 @@ def identify_unknown_elements(DataFrame, ColumnToSearch, Dictionary):
 #--------- End of Functions ---------#
 
 
-# Create four regular dictionaries to retrieve pre-exisiting data from
-# the database and catalouge new information.  The dicts store the
+# Create four regular dictionaries to retrieve pre-existing data from
+# the database and catalogue new information.  The dicts store the
 # information where the name of the entity is the key and the value is
 # the entity's unique identifier.  It's important to note the key value
 # for the team_ids dict is the full team name and NOT the team's
 # abbreviation. This contrasts the key value of the position_ids dict
-# which is a title cased abbreviation of the role. 
+# which is a title cased abbreviation of the role.
 #
 # For example,
 #    Player  : player_ids["Huhi"] = 1
@@ -297,7 +297,7 @@ except sqlite3.OperationalError:
 for row in c.execute('SELECT PositionID, PositionAbbrv FROM Positions;'):
     position_ids[row[1]] = int(row[0])
 
-# Grab the db's association of 
+# Grab the db's association of
 for row in c.execute(("SELECT LeagueID, RegionID, LeagueAbbrv"
                      "FROM Leagues;")):
     league_ids[row[-1]]['LeagueID'] = int(row[0])
@@ -319,7 +319,7 @@ data = pd.read_csv(("Raw Data/"
                    na_filter=True
                    )
 
-# Grab all teams except the LPL as they don't 
+# Grab all teams except the LPL as they don't
 # provide detailed data regarding their games
 data = data[data['league'].isin([
                                  'LCS',
@@ -425,7 +425,7 @@ data.rename(columns = {
 
 # Personal preference to capitalize Huhi and Aphro.  I could probably
 # use a string method to blanket this preference across all pro names
-# and if I notice a plethora of lower cased name I probably will.
+# and if I notice a plethora of lower cased names I probably will.
 data['player'] = data.player.replace({'huhi':'Huhi',
                                       'aphromoo':'Aphromoo'})
 
@@ -449,14 +449,14 @@ for col in champion_cols:
                                    'Kha\'zix': 'Kha\'Zix',
                                    'Cho\'gath':'Cho\'Gath',
                                    'Kog\'maw':'Kog\'Maw',
-                                   'Nunu': 'Nunu & Willump' 
+                                   'Nunu': 'Nunu & Willump'
                                    }
                                   )
     
     # Grab and iterate over the list of unique
     # champions in the current column.
     for champion in set(data[col]):
-        # Grab the list of current champion names 
+        # Grab the list of current champion names
         champ_keys = list(champion_ids.keys())
 
         # Determine if the value of champion is nan
@@ -539,11 +539,11 @@ data.loc[:,'position'] = data['position'].replace(position_ids)
 # of our db's PositionIDs over the provided abbreviations
 data['position'] = data['position'].str.capitalize()
 
-# Re-subset the transformed data again grabing all rows related
+# Re-subset the transformed data again grabbing all rows related
 # to a team's performance for a given match
 Teams = data[data['player'].isnull()]
 
-# Re-Subset the transformed data again grabing all rows related
+# Re-Subset the transformed data again grabbing all rows related
 # to a player's performance for a given match
 Players = data[data['player'].notnull()]
 
@@ -578,7 +578,7 @@ Players = Players.drop(non_player_stats,axis=1)
 
 # As it stands, this information is needed in both
 # the Players dataframes. So I sneak it to the front of the list
-## I dont think this is needed. Need to investigate.
+## I don't think this is needed. Need to investigate.
 non_player_stats.insert(0,'patch')
 non_player_stats.insert(0,'result')
 non_player_stats.insert(0,'side')
@@ -614,9 +614,9 @@ Teams.loc[:,'ban5'] = Teams['ban5'].replace(champion_ids)
 # This leads to the edge case for assigning positions to a player when
 # a player has played in more than one lane.  This is generally the
 # result of a team making a strategic decision to obtain a more
-# favorable lane matchup.  As conseqeunce, the swapped players are
+# favorable lane matchup.  As consequence, the swapped players are
 # noted to have played in their non-native lane.
-# 
+#
 # The following for statement guards against the possibility of
 # falsely assigning a player's position.  By using pandas'
 # value_counts() we obtain the frequency with which a player has
@@ -635,7 +635,7 @@ if(len(missing_pros) > 0):
         # Grab the lane/position id
         pos_id = temp.keys().tolist()[0]
         
-        # Inser the pro's information into the database
+        # Insert the pro's information into the database
         c.execute(
             ("INSERT INTO Players (PlayerID, ProHandle, PositionID) "
              "VALUES(?,?,?);"),
@@ -654,8 +654,8 @@ if(len(missing_pros) > 0):
 # There are a lot of factors that influence the amount of EXP, CS, and
 # Gold a player can have at the 10 and 15 minute mark.  My solution is
 # to subset the data at a player level and fill in missing values with
-# the median value of their performance for a given field. 
-# 
+# the median value of their performance for a given field.
+#
 # Subset the pro's performance data and grab
 # all rows with missing values.
 missing_data = Players[Players.isna().any(axis=1)]
@@ -727,7 +727,7 @@ for TeamRes in Teams.itertuples():
     
 
     # Grab the url and encapsulate in apostrophes to make storing
-    # the url in the databse less painful later on
+    # the url in the database less painful later on
     game_url = '\'' + TeamRes.url + '\''
 
     # Grab the day and time the match was played at
@@ -738,12 +738,12 @@ for TeamRes in Teams.itertuples():
     # URL to the game on Riotofficial site.
     if game_id not in MatchResults:
         # Parse and add the date to the dict.
-        # 
+        #
         # For some reason, when parsing an updated copy of the data
         # for the first time, the script throws an error saying the time
         # format is incorrect.  Changing the time format to what it
         # says it expecting, '%Y-%m-%d %H:%M:%S', and re-running the
-        # script will again throw the same error.  Howver the error says
+        # script will again throw the same error.  However the error says
         # the expected time format is what was originally the format
         # ('%m/%d/%Y %M:%S').  The script will successfully parse the
         # data after the format is reverted.
@@ -777,11 +777,11 @@ for TeamRes in Teams.itertuples():
     if TeamRes.result == 1:
         MatchResults[game_id]['WinningTeamID'] = team_id     
 
-    # Grab the players who played for the tean in the match 
+    # Grab the players who played for the team in the match
     temp = Players.loc[(Players['gameid'] == game_id)
                        & (Players['TeamID'] == team_id)]
     
-    # Iterate over the named tuples of the participating players 
+    # Iterate over the named tuples of the participating players
     for Player in temp.itertuples():
         # Record which position they played in the match
         MatchResults = find_player_pos(MatchResults, Player)
@@ -796,14 +796,14 @@ print("Parsing Data Completed")
 # I need to revisit whether or not I should even be using named
 # tuples.  At the time when I initially wrote the code I had been
 # programming for something like 12 hours straight and to say my
-# brain was fried would be pretty acurate.  I think my logic started
+# brain was fried would be pretty accurate.  I think my logic started
 # out as using namedtuple will improve readability which is generally
-# true...  Until you look at the monstrocity of a function "create_sql"
+# true...  Until you look at the monstrosity of a function "create_sql"
 # is and realize it's the Freddy Kreuger of readable code (Seriously,
 # that function haunts my dreams).  I need to sit down and invest time
 # into creating a function that accomplishes the same thing except nicer
 # and using dictionaries.  Computer science wise I'm curious how the
-# access time of namedtuple compares to that of dict. 
+# access time of namedtuple compares to that of dict.
 #
 # In order to use a namedtuple we have to provide an example of what
 # fields our namedtuple will hold.
@@ -828,7 +828,7 @@ PlayerPerfTuple = namedtuple('PlayerPerfTuple',
                              )
 
 # Create a named tuple based on a team's ability
-# to control objectivesfor a given match
+# to control objectives for a given match
 TeamObjectivesTuple = namedtuple('TeamObjectivesTuple',
                                  sorted(TeamObjs[ex_match_id][ex_team_id]
                                         )
