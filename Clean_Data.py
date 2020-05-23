@@ -2,7 +2,7 @@
 Author: Tyler Huffman
 Last Modified: 2020-04-21
 TODO: Clean up try and except statements, see about scraping OCE data,
-      add comments and doc strings, and create better variable names
+      add comments and doc strings to functions, and create better variable names
       for the functions
 """
 
@@ -95,19 +95,35 @@ def player_update_ledger(Dictionary, NamedTuple, Metrics):
     results are stored under the player's ID rather than the team's
     """
     try:
-        result = {word: int(getattr(NamedTuple, word)) for word in Metrics}
+        result = {word: int(getattr(NamedTuple,
+                                    word
+                                    )
+                            ) for word in Metrics}
     except ValueError:
         print("Value Error with Player")
         print(NamedTuple)
         for x in Metrics:
-            print("Metric: {}  NamedTuple Value: {}".format(x,getattr(NamedTuple, x)))
+            print(("Metric: {}  "
+                  "NamedTuple Value: {}").format(x,
+                                                 getattr(NamedTuple,
+                                                         x
+                                                         )
+                                                 )
+                  )
         input()
     except TypeError:
         print("Type Error with Player")
         for x in Metrics:
-            print("Metric: {}  NamedTuple Value: {}".format(x,getattr(NamedTuple, x)))
+            print(("Metric: {}  "
+                  "NamedTuple Value: {}").format(x,
+                                                 getattr(NamedTuple,
+                                                         x
+                                                         )
+                                                 )
+                  )
         input()
-    #### THIS LINE IS WHY update_ledger AND player_update_ledger ARE SEPERATED! ####
+    #### THIS LINE IS WHY update_ledger AND player_update_ledger
+    #### ARE SEPERATED!
     # Store the generated dictionary in the passed Dictionary under the
     # given game and respective player
     Dictionary[NamedTuple.gameid][NamedTuple.PlayerID] = result 
@@ -213,25 +229,39 @@ def identify_unknown_elements(DataFrame, ColumnToSearch, Dictionary):
 #--------- End of Functions ---------#
 
 
-player_ids = {}     # Use the player's prohandle as keys and a unique integer as a value
-team_ids = {}       # Create a dictionary where the team name is the key and the value is a unique integer
-champion_ids = {}   # Create a dictionary where the champion name is the key and the value is a unique integer
-position_ids = {}   # Create a dictionary where the position name is the key and the value is a unique integer
-league_ids = defaultdict(lambda: defaultdict(dict))     # Create a dictionary 
+# Create four regular dictionaries to retrieve pre-exisiting data from
+# the database and catalouge new information.  The dicts store the
+# information where the name of the entity is the key and the value is
+# the entity's unique identifier.  It's important to note the key value
+# for the team_ids dict is the full team name and NOT the team's
+# abbreviation. This contrasts the key value of the position_ids dict
+# which is a title cased abbreviation of the role. 
+#
+# For example,
+#    Player  : player_ids["Huhi"] = 1
+#    Champion: champion_ids["Annie"] = 2
+#    Team    : team_ids["Counter Logic Gaming"] = 3
+#    Position: position_ids["Jng"] = 4
+
+player_ids = {}
+team_ids = {}
+champion_ids = {}
+position_ids = {}
+
+
+league_ids = defaultdict(lambda: defaultdict(dict))
 
 # Connect to the database
 conn = sqlite3.connect('ProLoL.db')
 # Create an object to interact with the db
 c = conn.cursor()
 
-"""
-Try and grab data from the database. In the exception where a table does
-not exist then I assume none of the tables exist. Python will then grab
-and execute the schema to create the tables and run the SQL file which
-populates the newly created Regions and Positions table. Otherwise we
-grab the names and associated ids from specific tables currently in the
-database.
-"""
+# Try and grab data from the database.  In the exception where a table
+# does not exist then I assume none of the tables exist. Python will
+# then grab and execute the schema to create the tables and run the SQL
+# file which populates the newly created Regions and Positions table.
+# Otherwise we grab the names and associated ids from specific tables
+# currently in the database.
 try:
     # Grab the db's association of Players with PlayerIDs
     for row in c.execute(("SELECT PlayerID, ProHandle "
@@ -246,7 +276,7 @@ try:
 
     # Grab the db's association of Champions with ChampionIDs
     for row in c.execute(("SELECT ChampionID, ChampionName"
-                         "FROM Champions;"
+                          "FROM Champions;"
                           )
                          ):
         champion_ids[row[1]] = int(row[0])
@@ -267,17 +297,20 @@ except sqlite3.OperationalError:
 for row in c.execute('SELECT PositionID, PositionAbbrv FROM Positions;'):
     position_ids[row[1]] = int(row[0])
 
-# Grab the db's association of Regions with RegionIDs
-for row in c.execute('SELECT LeagueID, RegionID, LeagueAbbrv FROM Leagues;'):
+# Grab the db's association of 
+for row in c.execute(("SELECT LeagueID, RegionID, LeagueAbbrv"
+                     "FROM Leagues;")):
     league_ids[row[-1]]['LeagueID'] = int(row[0])
     league_ids[row[-1]]['RegionID'] = int(row[1])
  
 # Initialize a counter representing the total number
 # of champions recorded for adding champs to the DB
 champion_id_curr_max = init_max_counter(champion_ids)
-# Assign 
+
+# Ensure we can handle the case where a team failed to ban a champion
 champion_ids['Missed Ban'] = 0
 
+# Read in the data
 data = pd.read_csv(("Raw Data/"
                     "2020 spring match data OraclesElixir "
                     "2020-05-15.csv"
@@ -390,13 +423,13 @@ data.rename(columns = {
                    'team'                    : 'TeamID'
                    }, inplace=True)
 
-# Personal preference to capitalize Huhi and Aphro.
-# I could probably use a string method to blanket this preference
+# Personal preference to capitalize Huhi and Aphro.  I could probably
+# use a string method to blanket this preference across all pro names
 # and if I notice a plethora of lower cased name I probably will.
 data['player'] = data.player.replace({'huhi':'Huhi',
                                       'aphromoo':'Aphromoo'})
 
-# The multiple locations where champions are found
+# Store the column names of where champion names occur
 champion_cols = ['ChampionID',
                  'ban1',
                  'ban2',
@@ -404,23 +437,35 @@ champion_cols = ['ChampionID',
                  'ban4',
                  'ban5']
 
-# Make sure any column that holds a champion name conforms to a uniform
-# spelling of certain champion names.  
+# Make sure the columns containing champion names are clean
+# and ready to map their associated ID values to
 for col in champion_cols:
     # There's an instance where a champion name is blank...
     data[col] = data[col].str.strip().replace('',np.nan)
+    
+    # Ensure certain champion names are either correctly capitalized
     data[col] = data[col].replace({'Kai\'sa':'Kai\'Sa',
                                    'Vel\'koz':'Vel\'Koz',
                                    'Kha\'zix': 'Kha\'Zix',
                                    'Cho\'gath':'Cho\'Gath',
                                    'Kog\'maw':'Kog\'Maw',
-                                   'Nunu': 'Nunu & Willump'
+                                   'Nunu': 'Nunu & Willump' 
                                    }
                                   )
     
+    # Grab and iterate over the list of unique
+    # champions in the current column.
     for champion in set(data[col]):
+        # Grab the list of current champion names 
         champ_keys = list(champion_ids.keys())
+
+        # Determine if the value of champion is nan
         is_null = pd.isnull(champion)
+
+        # If the champion is NOT recorded AND NOT nan then the
+        # counter representing the current max ID value is increased
+        # by one, the champion is added to the dict, and the champion
+        # is added into the database.
         if (champion not in champ_keys) and (is_null == False):
             champion_id_curr_max += 1
             champion_ids[champion] = champion_id_curr_max
@@ -432,19 +477,24 @@ for col in champion_cols:
                         ]
                        )
                       )
+# Commit the changes to the database
 conn.commit()
 
-pros = data[(data.player.notnull())]
+# Subset the data and grab all rows related to player performance
+Pros = data[(data.player.notnull())]
 
+# Find any player's who are NOT in the database
 (player_ids,
  missing_pros,
  player_id_curr_max
- ) = identify_unknown_elements(pros,
+ ) = identify_unknown_elements(Pros,
                                'player',
                                player_ids
                                )
+# Subset the data and grab only the rows related to team performance
+Teams = data[data['position'] == 'team']
 
-teams = data[data['position'] == 'team']
+# Find any teams that are NOT in the database
 (team_ids,
  missing_teams,
  team_id_curr_max) = identify_unknown_elements(teams,
@@ -452,15 +502,21 @@ teams = data[data['position'] == 'team']
                                                team_ids
                                                )
 
-"""
-
-"""
+# I handle adding teams into the database like players: assign their
+# region based on frequency of playing in said region. For Oracle's
+# dataset I don't think this is necessary.  If/When I create one giant
+# spreadsheet of aggregated data from various seasons and tourneys is
+# when I think this method would be necessary.  This method would
+# incorrectly label teams that only ever participated in tournaments
+# and where never part of the professional scene. Specifically thinking
+# about the early years of league.
 if(len(missing_teams) > 0):
     for team in missing_teams:
-        # Find the frequency of which lanes they played in
+        # Find the frequency of which regions they played in
         temp = teams[(teams.TeamID == team)].league.value_counts()
         # Grab the lane/position id
         leagueabbrv = temp.keys().tolist()[0]
+        # Insert the team into the database
         c.execute(("INSERT INTO Teams (TeamID, TeamName, LeagueID,"
                    "RegionID) VALUES(?,?,?,?)"),
                   ([team_ids[team],
@@ -472,8 +528,8 @@ if(len(missing_teams) > 0):
     # Commit the inserts to the db
     conn.commit()
 
-# Substitute our PlayerIDs, TeamIDs, ChampionIDs, and PositionIDs
-# in place of the provided values.
+# Substitute the PlayerIDs, TeamIDs, ChampionIDs, and PositionIDs
+# for the provided values of the main dataframe
 data.loc[:,'PlayerID'] = data['player'].replace(player_ids)
 data.loc[:,'TeamID'] = data['TeamID'].replace(team_ids)
 data.loc[:,'ChampionID'] = data['ChampionID'].replace(champion_ids)
@@ -483,11 +539,11 @@ data.loc[:,'position'] = data['position'].replace(position_ids)
 # of our db's PositionIDs over the provided abbreviations
 data['position'] = data['position'].str.capitalize()
 
-# Subset the data and grab all rows related
-# to the team's performance for their matches 
+# Re-subset the transformed data again grabing all rows related
+# to a team's performance for a given match
 Teams = data[data['player'].isnull()]
 
-# Subset the data and grab all rows related
+# Re-Subset the transformed data again grabing all rows related
 # to a player's performance for a given match
 Players = data[data['player'].notnull()]
 
@@ -549,35 +605,37 @@ Teams.loc[:,'ban3'] = Teams['ban3'].replace(champion_ids)
 Teams.loc[:,'ban4'] = Teams['ban4'].replace(champion_ids)
 Teams.loc[:,'ban5'] = Teams['ban5'].replace(champion_ids)
 
-"""
-After converting the positions to their integer value we add the
-players to the database.  By default Oracle Elixir's match dataset
-does not provide what role a player *generally* plays.  Instead it
-notes which lane a player resided in during laning phase.
 
-This leads to the edge case for assigning positions to a player when
-a player has played in more than one lane.  This is generally the
-result of a team making a strategic decision to obtain a more
-favorable lane matchup.  As conseqeunce, the swapped players are
-noted to have played in their non-native lane.
+# After converting the positions to their integer value we add the
+# players to the database.  By default Oracle Elixir's match dataset
+# does not provide what role a player *generally* plays.  Instead it
+# notes which lane a player resided in during laning phase.
+#
+# This leads to the edge case for assigning positions to a player when
+# a player has played in more than one lane.  This is generally the
+# result of a team making a strategic decision to obtain a more
+# favorable lane matchup.  As conseqeunce, the swapped players are
+# noted to have played in their non-native lane.
+# 
+# The following for statement guards against the possibility of
+# falsely assigning a player's position.  By using pandas'
+# value_counts() we obtain the frequency with which a player has
+# played in a particular lane.  From there we assign their position by
+# choosing the lane with the highest frequency.
 
-The following for statement guards against the possibility of
-falsely assigning a player's position.  By using pandas'
-value_counts() we obtain the frequency with which a player has
-played in a particular lane.  From there we assign their position by
-choosing the lane with the highest frequency.
-"""
 # Check if there are any pros which need to be added to the database
 if(len(missing_pros) > 0):
     for pro in missing_pros:
         # Grab the pro's ID from the dictionary
         player_id = player_ids[pro]
+        
         # Find the frequency of which lanes they played in
         temp = Players[(Players.player == pro)].position.value_counts()
+        
         # Grab the lane/position id
         pos_id = temp.keys().tolist()[0]
-        # Utilize Python's auto-concatenate function
-        # to meet PEP 8 standards
+        
+        # Inser the pro's information into the database
         c.execute(
             ("INSERT INTO Players (PlayerID, ProHandle, PositionID) "
              "VALUES(?,?,?);"),
@@ -589,26 +647,27 @@ if(len(missing_pros) > 0):
     # Commit the inserts to the database
     conn.commit()
     
-"""
-When data regarding the number of objectives a team secured is missing
-I am able to manually correct the errors after investigating the match
-url or reviewing the vod.  Player performance data isn't as straight
-forward as counting the number or types of dragons a team secured.
-There are a lot of factors that influence the amount of EXP, CS, and
-Gold a player can have at the 10 and 15 minute mark.  My solution is
-to subset the data at a player level and fill in missing values with
-the median value of their performance for a given field. 
-"""
-
+# When data regarding the number of objectives a team secured is missing
+# I am able to manually correct the errors after investigating the match
+# url or reviewing the vod.  Player performance data isn't as straight
+# forward as counting the number or types of dragons a team secured.
+# There are a lot of factors that influence the amount of EXP, CS, and
+# Gold a player can have at the 10 and 15 minute mark.  My solution is
+# to subset the data at a player level and fill in missing values with
+# the median value of their performance for a given field. 
+# 
 # Subset the pro's performance data and grab
 # all rows with missing values.
 missing_data = Players[Players.isna().any(axis=1)]
+
 # Grab the names of pros who have gaps in their data
 pros = set(missing_data.player)
+
 for pro in pros:
     # Subset the data and grab only the performance
     # data associated with the player
     temp = Players[(Players['player'] == pro)]
+    
     # Create a list containing the indices of which rows
     # have the nan values
     rows = temp.index[temp.isna().any(axis=1)].tolist()
@@ -617,6 +676,7 @@ for pro in pros:
         # Extract a list of the columns containing
         # nan values for the row
         cols = temp.columns[temp.isna().any()].tolist()
+        
         # Calculate the median value for each missing metric
         # and overwrite the nan value at the given index in
         for metric in cols:
@@ -629,9 +689,10 @@ PlayerPerfs = defaultdict(lambda: defaultdict(dict))
 TeamObjs = defaultdict(lambda: defaultdict(dict))
 TeamBans = defaultdict(lambda: defaultdict(dict))
 
+BanCols = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5']
 
-BanMetrics = ['ban1', 'ban2', 'ban3', 'ban4', 'ban5']
-
+# A list containing the column names of metrics related to a team's
+# ability to secure objectives for the given match
 TeamObjMetrics = ['FirstDrake', 'InfernalDrakes','MountainDrakes',
                   'CloudDrakes','OceanDrakes', 'ElderDrakes', 'Heralds',
                   'FirstBaron', 'Barons', 'FirstTower', 'Towers',
@@ -639,6 +700,8 @@ TeamObjMetrics = ['FirstDrake', 'InfernalDrakes','MountainDrakes',
                   'TeamID'
                   ]
 
+# A list containing the column names of metrics related to a player's
+# performance for a given match
 PlayerPerfMetrics = ['PlayerID','ChampionID','Kills', 'Deaths',
                      'Assists', 'DoubleKills', 'TripleKills',
                      'QuadraKills', 'PentaKills', 'FirstBloodKill',
@@ -651,31 +714,56 @@ PlayerPerfMetrics = ['PlayerID','ChampionID','Kills', 'Deaths',
                      'XpAtFifteen', 'CsAtFifteen'
                      ]
 
-# Iterate over each row in the Teams dataframe as named tuples
+# Iterate over each team's match performance
 for TeamRes in Teams.itertuples():
+    # Grab the team's ID
     team_id = TeamRes.TeamID
+    
+    # Grab the provided unique game ID
     game_id = TeamRes.gameid
-    game_length = TeamRes.gamelength
+
+    # Grab and convert the duration of the game to a time object
+    game_length = parse_game_length(TeamRes.gamelength)
+    
+
+    # Grab the url and encapsulate in apostrophes to make storing
+    # the url in the databse less painful later on
     game_url = '\'' + TeamRes.url + '\''
+
+    # Grab the day and time the match was played at
     game_date = TeamRes.date
     
     # If this is the first time looking at this match we record the date
     # played, the duration of the match, the patch played on, and the
     # URL to the game on Riotofficial site.
     if game_id not in MatchResults:
-        # Parse and add the date to the dict  '%Y-%m-%d %H:%M:%S')
+        # Parse and add the date to the dict.
+        # 
+        # For some reason, when parsing an updated copy of the data
+        # for the first time, the script throws an error saying the time
+        # format is incorrect.  Changing the time format to what it
+        # says it expecting, '%Y-%m-%d %H:%M:%S', and re-running the
+        # script will again throw the same error.  Howver the error says
+        # the expected time format is what was originally the format
+        # ('%m/%d/%Y %M:%S').  The script will successfully parse the
+        # data after the format is reverted.
         MatchResults[game_id]['DatePlayed'] = datetime.strptime(
             game_date,
             '%m/%d/%Y %M:%S'
             )
-        MatchResults[game_id]['GameLength'] = parse_game_length(
-            game_length
-            )
+
+        # Store the time taken for the team to win/lose
+        MatchResults[game_id]['GameLength'] = game_length
+
+        # Store which patch the game was played on
         MatchResults[game_id]['OnPatch'] = TeamRes.patch
+
+        # Store the url to Riot's official match page
         MatchResults[game_id]['GameURL'] = game_url
 
     # Parse the champions banned by the team
-    TeamBans = update_ledger(TeamBans, TeamRes, BanMetrics)
+    TeamBans = update_ledger(TeamBans, TeamRes, BanCols)
+    
     # Parse the objectives secured by the team
     TeamObjs = update_ledger(TeamObjs, TeamRes, TeamObjMetrics)
 
@@ -697,6 +785,7 @@ for TeamRes in Teams.itertuples():
     for Player in temp.itertuples():
         # Record which position they played in the match
         MatchResults = find_player_pos(MatchResults, Player)
+        
         # Record the player's performance in the given match
         PlayerPerfs = player_update_ledger(PlayerPerfs,
                                            Player,
@@ -704,26 +793,44 @@ for TeamRes in Teams.itertuples():
 
 print("Parsing Data Completed")
 
+# I need to revisit whether or not I should even be using named
+# tuples.  At the time when I initially wrote the code I had been
+# programming for something like 12 hours straight and to say my
+# brain was fried would be pretty acurate.  I think my logic started
+# out as using namedtuple will improve readability which is generally
+# true...  Until you look at the monstrocity of a function "create_sql"
+# is and realize it's the Freddy Kreuger of readable code (Seriously,
+# that function haunts my dreams).  I need to sit down and invest time
+# into creating a function that accomplishes the same thing except nicer
+# and using dictionaries.  Computer science wise I'm curious how the
+# access time of namedtuple compares to that of dict. 
+#
+# In order to use a namedtuple we have to provide an example of what
+# fields our namedtuple will hold.
+# Grab a match ID
 ex_match_id = list(PlayerPerfs.keys())[0]
+# Grab a random player ID from the previously grabbed match
 ex_player_id = list(PlayerPerfs[ex_match_id].keys())[0]
+# Grab a random team ID from the previously grabbed match
 ex_team_id = list(TeamBans[ex_match_id].keys())[0]
 
-# Create named tuples to facilitate
-# converting the data into SQL statements
+# Create a named tuple based on a match in the MatchResults dict
+## Check if sorting the dict like this actually does anything.
+## I don't think dicts are sortable in this fashion...
 MatchResTuple = namedtuple('MatchResTuple',
                                sorted(MatchResults[ex_match_id])
                                )
+
+# Create a named tuple based on a player's performance for a given match
 PlayerPerfTuple = namedtuple('PlayerPerfTuple',
-                             sorted(PlayerPerfs[ex_match_id][ex_player_id
-                                                             ]
+                             sorted(PlayerPerfs[ex_match_id][ex_player_id]
                                     )
                              )
-TeamBansTuple = namedtuple('TeamBansTuple',
-                           sorted(TeamBans[ex_match_id][ex_team_id])
-                           )
+
+# Create a named tuple based on a team's ability
+# to control objectivesfor a given match
 TeamObjectivesTuple = namedtuple('TeamObjectivesTuple',
-                                 sorted(TeamObjs[ex_match_id][ex_team_id
-                                                              ]
+                                 sorted(TeamObjs[ex_match_id][ex_team_id]
                                         )
                                  )
 
@@ -742,8 +849,10 @@ BanID = 1
 for match in MatchResults:
     # Store the contents of the match into the appropriate named tuple
     MatchTemp = MatchResTuple(**MatchResults[match])
+    
     # Transform the data into a SQL DDL query
     MatchQuery = create_sql(MatchTemp, "Games", GameID)
+    
     # Execute the query in the database
     c.execute(MatchQuery)
     
@@ -753,11 +862,13 @@ for match in MatchResults:
         PlayerTemp = PlayerPerfTuple(
             **PlayerPerfs[match][player]
             )
+        
         # Transform the data into a SQL DDL query
         PlayerPerfQuery = create_sql(PlayerTemp,
                                      "Performances",
                                      GameID
                                      )
+        
         # Execute the query in the database
         c.execute(PlayerPerfQuery)
         
@@ -767,14 +878,17 @@ for match in MatchResults:
         ObjectivesTemp = TeamObjectivesTuple(
             **TeamObjs[match][team]
             )
+        
         # Transform the data into a SQL DDL query
         TeamObjectivesQuery = create_sql(ObjectivesTemp,
                                          "Objectives",
                                          GameID
                                          )
+        
         # Execute the query in the database
         c.execute(TeamObjectivesQuery)
 
+        # Parse and add the team's bans to the database
         for ban in TeamBans[match][team]:
             # Grab the banned champion
             ChampionID = TeamBans[match][team][ban]
@@ -788,8 +902,10 @@ for match in MatchResults:
                                                ChampionID,
                                                BanPosition
                                                )
+            
             # Execute the query in the database
-            c.execute(sql_query)
+            c.execute(sql_query)         
     GameID += 1
+    
 # Commit the changes to the database
 conn.commit()
