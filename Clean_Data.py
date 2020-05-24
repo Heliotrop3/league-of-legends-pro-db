@@ -206,10 +206,6 @@ def update_player_perf_dict(ParsedData: dict,
     # Same idea as update_ledger EXCEPT the results are stored
     # under the player's ID rather than the team's
     try:
-        # In either case where an exception is thrown I print the url.
-        # Personal preference, grabbing the url once looks cleaner than
-        # having duplicate lines
-        match_url = getattr(PlayerMatchData, 'url')
         
         # Grab the ID of the game and player so when we add the results
         # to the dictionary we can be under 72 columns wide
@@ -235,9 +231,6 @@ def update_player_perf_dict(ParsedData: dict,
             
     except ValueError:
         print("Value Error with Player")
-        print("Match URL: {}".format(match_url
-                                     )
-              )
         for x in Metrics:
             print(("Metric: {}  "
                   "PlayerMatchData Value: {}").format(x,
@@ -249,9 +242,6 @@ def update_player_perf_dict(ParsedData: dict,
         sys.exit(0)
     except TypeError:
         print("Type Error with Player")
-        print("Match URL: {}".format(match_url
-                                     )
-              )
         for x in Metrics:
             print(("Metric: {}  "
                   "PlayerMatchData Value: {}").format(x,
@@ -1036,9 +1026,9 @@ print("Parsing Data Completed")
 # initialize a BanID and GameID counter:
 #
 # Get starting GameID
-  GameID = c.execute("SELECT COUNT(G.GameID)+1 FROM Games G")
-  # Get starting BanID
-  BanID = c.execute("SELECT COUNT(B.BanID)+1 FROM Bans B")
+#GameID = c.execute("SELECT COUNT(G.GameID)+1 FROM Games G")
+# Get starting BanID
+#  BanID = c.execute("SELECT COUNT(B.BanID)+1 FROM Bans B")
 
 GameID = 1                                                                                      
 BanID = 1
