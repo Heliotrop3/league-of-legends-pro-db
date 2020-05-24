@@ -1,7 +1,9 @@
 """
 Author: Tyler Huffman
-Last Modified: 2020-04-21
-TODO: Correctly exit after an exception is caught and see about scraping OCE data.
+Last Modified: 2020-04-23
+TODO: Correctly exit after an exception is caught, investigate the
+      low_memory and fill_na flags when reading in the data, and explore
+      how to scrape OCE pro data.
 """
 
 from datetime import date, datetime, time
