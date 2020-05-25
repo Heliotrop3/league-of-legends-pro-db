@@ -15,7 +15,7 @@ also working with interesting, real-world data. I have been following profession
 for the past 5 years and while I could just visit [GameOfLegends](https://gol.gg/esports/home/) to view
 amazing player and team breakdowns, this doesn't help me learn SQL. If you're wanting a detailed analysis
 then I'd recommend checking out [GameOfLegends](https://gol.gg/esports/home/). This repository was designed
-to provide the curious individual with raw data to explore.
+to provide the curious individual with a databse to explore.
 
 ## Dependencies
 
@@ -40,7 +40,7 @@ to provide the curious individual with raw data to explore.
 
 > 2. Run "Clean_Data.py"
 
-After using the provided SQL files to create the database, Clean_Data.py proceeds to extract, transform
+After using the provided SQL files to create the relational database, Clean_Data.py proceeds to extract, transform
 and load the data into the database. All that's left to do is to connect to the database and start exploring!
 
 ## Acknowledgements
