@@ -17,6 +17,8 @@ amazing player and team breakdowns, this doesn't help me learn SQL. If you're wa
 then I'd recommend checking out [GameOfLegends](https://gol.gg/esports/home/). This repository was designed
 to provide the curious individual with a database to explore.
 
+&nbsp;  
+
 ## Dependencies
 
 * All code is written in Python 3.7.5
@@ -25,8 +27,8 @@ to provide the curious individual with a database to explore.
     * Clean_Data.py
 * Some code depends on the 'numpy' library
     * Clean_Data.py
-
-<code>&nbsp;</code>
+    
+&nbsp;  
 
 ## Getting Started
 
@@ -50,7 +52,6 @@ for making the data publicly available at his website
 [OraclesElixir](https://oracleselixir.com/matchdata/).
 In the same spirit of promoting access to data, I'm
 making this project publicly available.
-
 
 ## License
 [GNU AGPLv3 ](https://www.gnu.org/licenses/agpl-3.0.en.html)
