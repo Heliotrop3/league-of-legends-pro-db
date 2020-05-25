@@ -15,7 +15,7 @@ also working with interesting, real-world data. I have been following profession
 for the past 5 years and while I could just visit [GameOfLegends](https://gol.gg/esports/home/) to view
 amazing player and team breakdowns, this doesn't help me learn SQL. If you're wanting a detailed analysis
 then I'd recommend checking out [GameOfLegends](https://gol.gg/esports/home/). This repository was designed
-to provide the curious individual with a databse to explore.
+to provide the curious individual with a database to explore.
 
 ## Dependencies
 
