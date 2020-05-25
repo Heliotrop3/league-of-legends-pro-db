@@ -41,7 +41,7 @@ to provide the curious individual with raw data to explore.
 > 2. Run "Clean_Data.py"
 
 After using the provided SQL files to create the database, Clean_Data.py proceeds to extract, transform
-and load the data into the database. All that's left to do is to connect to the database and start investigating!
+and load the data into the database. All that's left to do is to connect to the database and start exploring!
 
 ## Acknowledgements
 
