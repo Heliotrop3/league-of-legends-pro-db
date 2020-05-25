@@ -43,7 +43,7 @@ to provide the curious individual with a database to explore.
 > 2. Run "Clean_Data.py"
 
 After using the provided SQL files to create the relational database, Clean_Data.py proceeds to extract, transform
-and load the data into the database. All that's left to do is to connect to the database and start exploring!
+and load the data into the database. All that's left to do is connect to the database and start exploring!
 
 ## Acknowledgements
 
