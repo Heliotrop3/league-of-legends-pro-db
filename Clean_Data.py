@@ -363,7 +363,7 @@ def create_bans_sql(BanID  : int,
         Returns
         -------
         str
-            A  SQL query in the form of a String
+            A SQL query in the form of a String
         
     """
     # Create the SQL Query
@@ -537,9 +537,9 @@ champion_id_curr_max = init_max_counter(champion_ids)
 champion_ids['Missed Ban'] = 0
 
 # Read in the data
+2020 Spring Match Data 2020-05-15
 data = pd.read_csv(("Raw Data/"
-                    "2020 spring match data OraclesElixir "
-                    "2020-05-15.csv"
+                    "2020 Spring Match Data 2020-05-15.csv"
                     ),
                    low_memory=False,
                    na_filter=True
