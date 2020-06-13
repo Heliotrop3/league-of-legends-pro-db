@@ -8,7 +8,7 @@ TODO: Correctly exit after an exception is caught, investigate the
 """
 
 from datetime import date, datetime, time
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from typing import Tuple, NamedTuple
 import sqlite3
 import os
@@ -464,6 +464,9 @@ team_ids = {}
 champion_ids = {}
 position_ids = {}
 
+# Create a set to hold the urls for the games already in the database.
+existing_urls = set([])
+
 # To correctly initialize a team in the database we need to have the ID
 # corresponding to their geographical region along with the ID of the
 # league they participate in. I store the results in the same manner I
@@ -499,6 +502,11 @@ try:
                           )
                          ):
         champion_ids[row[1]] = int(row[0])
+
+    # Grab the URLs for games which are already in the db
+    for row in c.execute("SELECT GameURL FROM Games"):
+        if row[0] not in existing_urls:
+            existing_urls.add(row[0])
 
 # If the table does not exist then execute the SQL files containing the
 # schema and initial state of the database.
@@ -537,7 +545,6 @@ champion_id_curr_max = init_max_counter(champion_ids)
 champion_ids['Missed Ban'] = 0
 
 # Read in the data
-2020 Spring Match Data 2020-05-15
 data = pd.read_csv(("Raw Data/"
                     "2020 Spring Match Data 2020-05-15.csv"
                     ),
@@ -558,6 +565,21 @@ data = data[data['league'].isin([
                                  ]
                                 )
             ]
+
+# Drop all rows of data where the games are already recorded
+data = data[~data['url'].isin(existing_urls)]
+
+if data.empty:
+    print("There are no new games.")
+    
+    # Close the connection to the database
+    conn.close()
+    input("Press any key to exit")
+    
+    # Exit the program
+    sys.exit(0)
+    
+
 
 # I'm aiming to have a database in strictly 3rd Normalized form.
 # In short, I don't want any data I can derive.
@@ -653,7 +675,9 @@ data.rename(columns = {
 # use a string method to blanket this preference across all pro names
 # and if I notice a plethora of lower cased names I probably will.
 data['player'] = data.player.replace({'huhi':'Huhi',
-                                      'aphromoo':'Aphromoo'})
+                                      'aphromoo':'Aphromoo'
+                                      }
+                                     )
 
 # Store the column names of where champion names occur
 champion_cols = ['ChampionID',
@@ -661,7 +685,8 @@ champion_cols = ['ChampionID',
                  'ban2',
                  'ban3',
                  'ban4',
-                 'ban5']
+                 'ban5'
+                 ]
 
 # Make sure the columns containing champion names are clean
 # and ready to map their associated ID values to
@@ -873,7 +898,7 @@ if(len(missing_pros) > 0):
     conn.commit()
     
 # When data regarding the number of objectives a team secured is missing
-# I am able to manually correct the errors after investigating the match
+# I am able to manually correct the errors by investigating the match
 # url or reviewing the vod.  Player performance data isn't as straight
 # forward as counting the number or types of dragons a team secured.
 # There are a lot of factors that influence the amount of EXP, CS, and
@@ -1022,16 +1047,14 @@ for TeamRes in Teams.itertuples():
 print("Parsing Data Completed")
 
 
-# No no, I need to do the following to
-# initialize a BanID and GameID counter:
-#
-# Get starting GameID
-#GameID = c.execute("SELECT COUNT(G.GameID)+1 FROM Games G")
-# Get starting BanID
-#  BanID = c.execute("SELECT COUNT(B.BanID)+1 FROM Bans B")
 
-GameID = 1                                                                                      
-BanID = 1
+#Get starting GameID
+for number in c.execute("SELECT COUNT(G.GameID)+1 FROM Games G"):
+    GameID = number[0]
+    
+# Get starting BanID
+for number in c.execute("SELECT COUNT(B.BanID)+1 FROM Bans B"):
+    BanID = number[0]
 
 for match in MatchResults:
     MatchTemp = MatchResults[match]
