@@ -13,6 +13,7 @@ from typing import Tuple, NamedTuple
 import sqlite3
 import os
 import sys
+import pathlib
 import pandas as pd
 import numpy as np
 
@@ -544,9 +545,20 @@ champion_id_curr_max = init_max_counter(champion_ids)
 # Ensure we can handle the case where a team failed to ban a champion
 champion_ids['Missed Ban'] = 0
 
+# Define the path where the data is stored
+
+# For all csv files in the "Raw Data/" path
+
+# Read the data into a temp dataframe
+
+# Drop the LPL from the data
+
+# Append the data to the main dataframe
+
+
 # Read in the data
 data = pd.read_csv(("Raw Data/"
-                    "2020 Spring Match Data 2020-05-15.csv"
+                    "2020 Summer Match Data 2020-07-08.csv"
                     ),
                    low_memory=False,
                    na_filter=True
@@ -569,6 +581,7 @@ data = data[data['league'].isin([
 # Drop all rows of data where the games are already recorded
 data = data[~data['url'].isin(existing_urls)]
 
+"""
 if data.empty:
     print("There are no new games.")
     
@@ -578,7 +591,7 @@ if data.empty:
     
     # Exit the program
     sys.exit(0)
-    
+""" 
 
 
 # I'm aiming to have a database in strictly 3rd Normalized form.
@@ -783,11 +796,11 @@ if(len(missing_teams) > 0):
 data.loc[:,'PlayerID'] = data['player'].replace(player_ids)
 data.loc[:,'TeamID'] = data['TeamID'].replace(team_ids)
 data.loc[:,'ChampionID'] = data['ChampionID'].replace(champion_ids)
-data.loc[:,'position'] = data['position'].replace(position_ids)
 
 # Capitalize the position abbreviations enables easier mapping
 # of our db's PositionIDs over the provided abbreviations
 data['position'] = data['position'].str.capitalize()
+data.loc[:,'position'] = data['position'].replace(position_ids)
 
 # Re-subset the transformed data again grabbing all rows related
 # to a team's performance for a given match
