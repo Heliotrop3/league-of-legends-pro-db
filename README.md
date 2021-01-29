@@ -9,10 +9,10 @@ height=200px
 >
 </p>
 
-League of Legends Pro Database is a project born from the desire to sharpen my SQL skills while
+League of Legends Pro Database is a project born from the desire to sharpen my querying skills while
 also working with interesting, real-world data. I have been following professional League of Legends
-for the past 5 years and while I could just visit [GameOfLegends](https://gol.gg/esports/home/) to view
-amazing player and team breakdowns, this doesn't help me learn SQL. If you're wanting a detailed analysis
+for the past 5 years and while one could just visit [GameOfLegends](https://gol.gg/esports/home/) to view
+amazing player and team breakdowns, this doesn't help sharpen any querying skills. If you're wanting a detailed analysis
 then I'd recommend checking out [GameOfLegends](https://gol.gg/esports/home/). This repository was designed
 to provide the curious individual with a database to explore.
 
